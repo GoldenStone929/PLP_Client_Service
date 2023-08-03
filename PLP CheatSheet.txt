@@ -1,0 +1,47 @@
+// Import necessary packages
+import com.scitegic.proxy.*;
+
+// Server Connection & Configuration
+PipelinePilotServer pp = new PipelinePilotServer(server, user, password);
+PipelinePilotServerConfig conf = pp.getServerConfig();
+
+// Remote File Manager
+pp.getRemoteFileManager();
+
+// Work with Component Database
+ComponentDatabase compdb;
+XmldbItem rootFolder = compdb.getXmldbContentsRecursive(WEB_PORT_EXAMPLE_PROTOCOLS);
+
+// Protocol Creation & Info Retrieval
+Job protocol = pp.createJob(PROTOCOL);
+ComponentInfo cmptInfo = protocol.getComponentInfo();
+ParameterInfo[] params = cmptInfo.getParameters();
+
+// Print each parameter object details
+for (ParameterInfo para : params) {
+    System.out.println("Name=" + para.getName() + "; Type=" + para.getType() + "; isRequired=" + para.isRequired());
+}
+
+// Set protocol parameters
+File localFile = new File("./data/imports-85.txt");
+protocol.setInputFileOnClient("Source", localFile);
+protocol.setInputValue("X Property", "Highwaympg");
+
+// Validate the protocol
+protocol.validate();
+
+// Submit job and check its status
+JobResult prr = protocol.runAndPoll();
+JobStatus status = protocol.getStatus();
+
+// Check for job results and download if available
+if (JobStatus.Finished.equals(status)) {
+    String[] results = prr.getResultFiles();
+    if (results.length > 0) {
+        File localResultFile = new File("chart.sdf");
+        pp.getRemoteFileManager().downloadFile(results[0], localResultFile);
+    }
+}
+
+// Release the job resources
+protocol.releaseJob();

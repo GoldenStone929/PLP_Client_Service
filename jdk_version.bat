@@ -1,0 +1,1 @@
+SET JAVA_VERSION=jdk
