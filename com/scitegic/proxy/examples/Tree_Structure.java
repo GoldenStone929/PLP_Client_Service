@@ -6,12 +6,12 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.File;
 
-public class NewTree {
+public class Tree_Structure {
 
 	static final String WEB_PORT_EXAMPLE_PROTOCOLS = "Protocols/Web Services/Web Port Examples";
 	static final String PROTOCOL = WEB_PORT_EXAMPLE_PROTOCOLS + "/Generic/XY Scatter Plot Utility";
 
-	public NewTree() {
+	public Tree_Structure() {
 	}
 
 	private static DefaultMutableTreeNode buildTreeRecursive(XmldbItem folder, int indent) {

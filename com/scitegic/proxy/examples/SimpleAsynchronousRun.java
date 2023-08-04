@@ -2,39 +2,36 @@ package com.scitegic.proxy.examples;
 
 import com.scitegic.proxy.*;
 
-import java.io.File;
-import java.util.ArrayList;
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class SimpleAsynchronousRun {
 
-//	static final String EXAMPLE_PROTOCOLS = "Protocols/Examples";
 	static final String WEB_PORT_EXAMPLE_PROTOCOLS = "Protocols/Web Services/Web Port Examples";
 	static final String PROTOCOL = WEB_PORT_EXAMPLE_PROTOCOLS + "/Generic/XY Scatter Plot Utility";
-	static final String WHITESPACE = "                                                     ";
-	static ArrayList<ArrayList<String>> folderTree = new ArrayList<ArrayList<String>>();
 
 	public SimpleAsynchronousRun() {
 	}
 
-	private static void printFolderTreeRecursive(XmldbItem folder, int indent) {
+	private static DefaultMutableTreeNode buildFolderTreeRecursive(XmldbItem folder, int indent) {
 		if (folder.getName().toLowerCase().equals("utilities")) {
-			return;
+			return null;
 		}
-		String folderName = WHITESPACE.substring(0, indent) + folder.getName();
-		ArrayList<String> currentFolder = new ArrayList<String>();
-		currentFolder.add(folderName);
-		folderTree.add(currentFolder);
+		DefaultMutableTreeNode currentFolder = new DefaultMutableTreeNode(folder.getName());
 		indent += 2;
 		XmldbItem[] children = folder.getChildren();
 		for (int i = 0, m = children.length; i < m; i++) {
 			XmldbItem child = children[i];
 			if (child.isFolder()) {
-				printFolderTreeRecursive(child, indent);
+				DefaultMutableTreeNode childFolder = buildFolderTreeRecursive(child, indent);
+				if (childFolder != null) {
+					currentFolder.add(childFolder);
+				}
 			} else {
-				String fileName = WHITESPACE.substring(0, indent) + child.getName();
-				currentFolder.add(fileName);
+				currentFolder.add(new DefaultMutableTreeNode(child.getName()));
 			}
 		}
+		return currentFolder;
 	}
 
 	public static void main(String[] args) {
@@ -55,41 +52,23 @@ public class SimpleAsynchronousRun {
 			ComponentDatabase compdb = pp.getComponentDatabase();
 
 			XmldbItem rootFolder = compdb.getXmldbContentsRecursive(WEB_PORT_EXAMPLE_PROTOCOLS);
-			printFolderTreeRecursive(rootFolder, 0);
+			DefaultMutableTreeNode treeRoot = buildFolderTreeRecursive(rootFolder, 0);
 
-			protocol = pp.createJob(PROTOCOL);
-			boolean uploadFromClient = true;
-			if (uploadFromClient) {
-				File localFile = new File("./data/imports-85.txt");
-				protocol.setInputFileOnClient("Source", localFile);
-			} else {
-				protocol.setInputValue("Source", "data/Tables/imports-85.txt");
-			}
+			// Create and show the JTree
+			SwingUtilities.invokeLater(() -> {
+				JFrame frame = new JFrame("File Structure");
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-			protocol.setInputValue("X Property", "Highwaympg");
-			protocol.setInputValue("Y Property", "Horsepower");
-			protocol.setInputValue("Tooltip",
-					"'Make = ' . (make) . ', $(X Property) = ' . ($(X Property)) . ', "
-							+ "$(Y Property) = ' . ($(Y Property))");
-			protocol.setInputValue("File Type", "PDF");
-			protocol.validate();
+				JTree tree = new JTree(treeRoot);
+				JScrollPane scrollPane = new JScrollPane(tree);
+				frame.add(scrollPane);
 
-			protocol.run();
+				frame.setSize(500, 500);
+				frame.setLocationRelativeTo(null);
+				frame.setVisible(true);
+			});
 
-			JobStatus status = protocol.getStatus();
-			while (!status.isExitStatus()) {
-				Thread.sleep(2000);
-				status = protocol.getStatus();
-			}
-
-			if (JobStatus.Finished.equals(status)) {
-				String[] results = protocol.getJobResults().getResultFiles();
-
-				if (results.length > 0) {
-					File localResultFile = new File("chart.pdf");
-					pp.getRemoteFileManager().downloadFile(results[0], localResultFile);
-				}
-			}
+			// Other job-related code ...
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -99,14 +78,6 @@ public class SimpleAsynchronousRun {
 				} catch (Exception ex) {
 				}
 			}
-		}
-
-		// Print the folderTree ArrayList
-		for (ArrayList<String> folder : folderTree) {
-			for (String item : folder) {
-				System.out.println("N * N :" + item);
-			}
-			System.out.println(); // Print a new line between folders
 		}
 	}
 }
