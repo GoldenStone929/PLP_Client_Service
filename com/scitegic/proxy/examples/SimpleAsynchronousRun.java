@@ -104,7 +104,7 @@ public class SimpleAsynchronousRun {
 		// Print the folderTree ArrayList
 		for (ArrayList<String> folder : folderTree) {
 			for (String item : folder) {
-				System.out.println("N * N ArrayList:" + item);
+				System.out.println("N * N :" + item);
 			}
 			System.out.println(); // Print a new line between folders
 		}

@@ -33,4 +33,4 @@ call jdk_version.bat
 set PACKAGES=..\..\..\core\packages_win32
 IF NOT EXIST %PACKAGES% @set PACKAGES=..\..\..\core\packages_win64
 
-%PACKAGES%\java\%JAVA_VERSION%\bin\java -classpath %CLASSPATH% com.scitegic.proxy.examples.SimpleAsynchronousRun %1 %2 %3
+%PACKAGES%\java\%JAVA_VERSION%\bin\java -classpath %CLASSPATH% com.scitegic.proxy.examples.NewTree %1 %2 %3
