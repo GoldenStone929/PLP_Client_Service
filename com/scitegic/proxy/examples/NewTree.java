@@ -63,7 +63,7 @@ public class NewTree {
 				JScrollPane scrollPane = new JScrollPane(tree);
 				frame.add(scrollPane);
 
-				frame.setSize(500, 500);
+				frame.setSize(1500, 1500);
 				frame.setLocationRelativeTo(null);
 				frame.setVisible(true);
 			});
