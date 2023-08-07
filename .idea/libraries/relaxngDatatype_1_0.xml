@@ -1,0 +1,28 @@
+<component name="libraryTable">
+  <library name="relaxngDatatype-1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/relaxngDatatype-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/jax-qname-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/jaxp-api-1.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/saaj-api-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/activation-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/jaxrpc-api-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/jaxrpc_pp_stubs_ext.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/mail-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/jaxrpc-impl-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/jaxrpc_pp_stubs.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/jaxrpc-spi-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/FastInfoset-1.2.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/slf4j-api-1.7.25.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/saaj-impl-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/xerces-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/xsdlib-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/jalpp.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/jaxrpc_pp_stubs_ext.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../bin/bin/lib/jaxrpc_pp_stubs.jar!/" />
+    </SOURCES>
+  </library>
+</component>
