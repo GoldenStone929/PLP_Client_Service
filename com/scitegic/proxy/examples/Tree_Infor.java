@@ -1,37 +1,34 @@
 package com.scitegic.proxy.examples;
 
+
+import com.scitegic.proxy.ComponentDatabase;
+import com.scitegic.proxy.PipelinePilotServer;
+import com.scitegic.proxy.XmldbItem;
+import com.scitegic.proxy.PipelinePilotServerConfig;
+import com.scitegic.proxy.Job;
+
+
 import com.scitegic.proxy.*;
 
 import javax.swing.*;
 import javax.swing.tree.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
-// folder -> File -> File information
 public class Tree_Infor {
 
     static final String WEB_PORT_EXAMPLE_PROTOCOLS = "Protocols/Web Services/Web Port Examples";
     static final String PROTOCOL = WEB_PORT_EXAMPLE_PROTOCOLS + "/Generic/XY Scatter Plot Utility";
 
-    public Tree_Infor() {
-    }
+    public Tree_Infor() {}
 
-    private static DefaultMutableTreeNode buildTreeRecursive(XmldbItem folder, int indent) {
-        if (folder.getName().toLowerCase().equals("utilities")) {
-            return null;
-        }
+    private static DefaultMutableTreeNode buildTreeRecursive(XmldbItem folder) {
         DefaultMutableTreeNode currentFolder = new DefaultMutableTreeNode(folder.getName());
-        indent += 2;
         XmldbItem[] children = folder.getChildren();
-        for (int i = 0, m = children.length; i < m; i++) {
-            XmldbItem child = children[i];
+        for (XmldbItem child : children) {
             if (child.isFolder()) {
-                DefaultMutableTreeNode childFolder = buildTreeRecursive(child, indent);
-                if (childFolder != null) {
-                    currentFolder.add(childFolder);
-                }
+                currentFolder.add(buildTreeRecursive(child));
             } else {
                 currentFolder.add(new DefaultMutableTreeNode(child.getName()));
             }
@@ -57,37 +54,27 @@ public class Tree_Infor {
             ComponentDatabase compdb = pp.getComponentDatabase();
 
             XmldbItem rootFolder = compdb.getXmldbContentsRecursive(WEB_PORT_EXAMPLE_PROTOCOLS);
-            DefaultMutableTreeNode treeRoot = buildTreeRecursive(rootFolder, 0);
+            DefaultMutableTreeNode treeRoot = buildTreeRecursive(rootFolder);
 
-            SwingUtilities.invokeLater(() -> {
-                JFrame frame = new JFrame("File Structure");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setLayout(new BorderLayout());
-
-                JTree tree = new JTree(treeRoot);
-                JScrollPane scrollPane = new JScrollPane(tree);
-                frame.add(scrollPane, BorderLayout.WEST);
-
-                DefaultListModel<String> listModel = new DefaultListModel<>();
-                JList<String> list = new JList<>(listModel);
-                JScrollPane listScrollPane = new JScrollPane(list);
-                frame.add(listScrollPane, BorderLayout.CENTER);
-
-                tree.addMouseListener(new MouseAdapter() {
-                    public void mouseClicked(MouseEvent me) {
-                        TreePath tp = tree.getPathForLocation(me.getX(), me.getY());
-                        if (tp != null) {
-                            listModel.clear();
-                            listModel.addElement(tp.getLastPathComponent().toString());
-                            // You can add more information to the listModel here.
+            JTree tree = new JTree(treeRoot);
+            tree.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent me) {
+                    TreePath tp = tree.getPathForLocation(me.getX(), me.getY());
+                    if (tp != null) {
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp.getLastPathComponent();
+                        if (node.isLeaf()) {
+                            new JobPane(node.getUserObject().toString());
                         }
                     }
-                });
-
-                frame.setSize(500, 500);
-                frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
+                }
             });
+
+            JFrame frame = new JFrame("File Structure");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.add(new JScrollPane(tree));
+            frame.setSize(500, 500);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
 
             protocol = pp.createJob(PROTOCOL);
             boolean uploadFromClient = true;

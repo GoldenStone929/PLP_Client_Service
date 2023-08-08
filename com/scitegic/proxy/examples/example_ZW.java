@@ -36,6 +36,7 @@ public class example_ZW {
 	}
 
 
+
 	private static void printFolderTreeRecursive(XmldbItem folder, int indent) {
 		if (folder.getName().toLowerCase().equals("utilities")) {
 			return;
@@ -55,7 +56,7 @@ public class example_ZW {
 
 
 	public static void main(String[] args) {
-		// Pick up the server URL, username, and password from the command line
+		// Pick up the server URL, username, and password from the command line.
 		if (args.length < 3) {
 			System.out.println("Usage: java com.scitegic.proxy.examples.SimpleAsynchronousRun "
 					+ "<server_url> <username> <password>");
