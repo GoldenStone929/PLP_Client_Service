@@ -15,7 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-
+import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -379,34 +379,41 @@ public class TestGUI {
 		panelRightMiddle.repaint();
 		return;
 	}
-	
+
 	private void createTopGUI() {
 		frame = new JFrame();
-		
+
+		// Declare the imageIcon variable
+		ImageIcon BHTIcon;
+
+		BHTIcon = new ImageIcon(".\\data\\logo-bht.png");
+		java.awt.Image image = BHTIcon.getImage();
+		frame.setIconImage(image);
+
 		panelLeft = new JPanel();
 		panelLeft.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelLeft.setLayout(new GridLayout(0, 1));
-		
+
 		panelRight = new JPanel();
 		panelRight.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelRight.setLayout(new GridLayout(0, 1));
 		panelRight.setAutoscrolls(true);
-		
-		//addTree();
-		//addPLPTree();
-		
+
 		createLeftPanel();
 		createRightPanel();
-		
+
 		frame.add(panelLeft, BorderLayout.WEST);
 		frame.add(panelRight, BorderLayout.EAST);
-		
+
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("My TestGUI");
 		frame.pack();
 		frame.setVisible(true);
 	}
-	
+
+
+
+
 	private void createLeftPanel() {
 		
 		panelLeftTop = new JPanel();

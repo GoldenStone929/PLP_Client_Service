@@ -1,5 +1,5 @@
 package com.scitegic.proxy.examples;
-
+import javax.swing.ImageIcon;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,14 +9,15 @@ import javax.swing.*;
 import com.scitegic.proxy.*;
 
 public class Login extends JFrame {
-
     private JTextField serverAddressField;
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JTextArea infoTextArea;
     private JButton loginButton;
     private PipelinePilotServer globalPPServer;
-
+    private ImageIcon BHTIcon;
+    private JFrame frame;
+    private java.awt.Image image;
     public static boolean isUserValid = false;
     private final Object lock = new Object();
 
@@ -25,7 +26,13 @@ public class Login extends JFrame {
     }
 
     public Login() {
-        super("Login");
+
+        super("Blossomhill therapeutics Login");
+
+        BHTIcon = new ImageIcon(".\\data\\logo-bht.png");
+        image = BHTIcon.getImage();
+        this.setIconImage(image);
+//        frame.setIconImage(image);
 
         serverAddressField = new JTextField(20);
         usernameField = new JTextField(20);
@@ -79,6 +86,9 @@ public class Login extends JFrame {
             }
         });
 
+//        frame.setIconImage(image);
+
+
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
@@ -99,6 +109,7 @@ public class Login extends JFrame {
         mainPanel.add(passwordPanel);
         mainPanel.add(loginButton);
         mainPanel.add(new JScrollPane(infoTextArea));
+
 
         add(mainPanel);
         pack();
