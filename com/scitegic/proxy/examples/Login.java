@@ -1,5 +1,6 @@
 package com.scitegic.proxy.examples;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -12,22 +13,24 @@ public class Login extends JFrame {
     private JTextField serverAddressField;
     private JTextField usernameField;
     private JPasswordField passwordField;
+    private JTextArea infoTextArea;
     private JButton loginButton;
     private PipelinePilotServer globalPPServer;
 
     public static boolean isUserValid = false;
-
     private final Object lock = new Object();
 
     public void closeLogin() {
         this.dispose();
     }
+
     public Login() {
         super("Login");
 
         serverAddressField = new JTextField(20);
         usernameField = new JTextField(20);
         passwordField = new JPasswordField(20);
+        infoTextArea = new JTextArea(5, 20);
         loginButton = new JButton("Login");
 
         loginButton.addActionListener(new ActionListener() {
@@ -39,23 +42,22 @@ public class Login extends JFrame {
 
                 try {
                     globalPPServer = new PipelinePilotServer(serverAddress, username, password);
-                    System.out.println("Server connection established!");
+                    infoTextArea.append("Server connection established!\n");
 
                     try {
                         PipelinePilotServerConfig conf = globalPPServer.getServerConfig();
                         isUserValid = true;
-                        System.out.println("Login successful!");
+                        infoTextArea.append("Login successful!\n");
                     } catch (Exception ex) {
                         isUserValid = false;
-                        System.out.println("Login failed: " + ex.getMessage());
+                        infoTextArea.append("Login failed: " + ex.getMessage() + "\n");
                     }
 
                 } catch (Exception ex) {
-                    System.out.println("Error establishing server connection: " + ex.getMessage());
+                    infoTextArea.append("Error establishing server connection: " + ex.getMessage() + "\n");
                 }
 
                 if (isUserValid) {
-                    System.out.println("Login successful!");
                     Global.serverAddress = serverAddress;
                     Global.username = username;
                     Global.password = password;
@@ -63,11 +65,10 @@ public class Login extends JFrame {
                         lock.notify();
                     }
                 } else {
-                    System.out.println("Login failed!");
+                    infoTextArea.append("Login failed!\n");
                 }
             }
         });
-
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -78,16 +79,28 @@ public class Login extends JFrame {
             }
         });
 
-        JPanel panel = new JPanel();
-        panel.add(new JLabel("Server address:"));
-        panel.add(serverAddressField);
-        panel.add(new JLabel("Username:"));
-        panel.add(usernameField);
-        panel.add(new JLabel("Password:"));
-        panel.add(passwordField);
-        panel.add(loginButton);
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-        add(panel);
+        JPanel serverPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        serverPanel.add(new JLabel("Server address:"));
+        serverPanel.add(serverAddressField);
+
+        JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        usernamePanel.add(new JLabel("Username:"));
+        usernamePanel.add(usernameField);
+
+        JPanel passwordPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        passwordPanel.add(new JLabel("Password:"));
+        passwordPanel.add(passwordField);
+
+        mainPanel.add(serverPanel);
+        mainPanel.add(usernamePanel);
+        mainPanel.add(passwordPanel);
+        mainPanel.add(loginButton);
+        mainPanel.add(new JScrollPane(infoTextArea));
+
+        add(mainPanel);
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
