@@ -1,0 +1,94 @@
+package com.scitegic.proxy.examples;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+
+import java.io.File;
+
+import com.scitegic.proxy.ComponentDatabase;
+import com.scitegic.proxy.ComponentInfo;
+import com.scitegic.proxy.ParameterInfo;
+import com.scitegic.proxy.Job;
+import com.scitegic.proxy.JobResult;
+import com.scitegic.proxy.JobStatus;
+import com.scitegic.proxy.PipelinePilotServer;
+import com.scitegic.proxy.PipelinePilotServerConfig;
+import com.scitegic.proxy.XmldbItem;
+class LoginFrame extends JFrame {
+    private JTextField serverField;
+    private JTextField nameField;
+    private JPasswordField passwordField;
+    private JButton loginButton;
+    private JLabel statusLabel;
+
+    public LoginFrame() {
+        setTitle("Login");
+        setSize(300, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(5, 2));
+
+        serverField = new JTextField();
+        nameField = new JTextField();
+        passwordField = new JPasswordField();
+        loginButton = new JButton("Login");
+        statusLabel = new JLabel();
+
+        add(new JLabel("Server Address:"));
+        add(serverField);
+        add(new JLabel("Name:"));
+        add(nameField);
+        add(new JLabel("Password:"));
+        add(passwordField);
+        add(loginButton);
+        add(statusLabel);
+
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                authenticate();
+            }
+        });
+
+        setVisible(true);
+    }
+
+    private void authenticate() {
+        try {
+            PipelinePilotServer pp = new PipelinePilotServer(serverField.getText(), nameField.getText(), new String(passwordField.getPassword()));
+            statusLabel.setText("Logged in successfully!");
+            this.dispose();
+            new TestGUI_ZW();
+        } catch (Exception ex) {
+            statusLabel.setText("Login failed!");
+        }
+    }
+}
+
+    public static void main(String[] args) {
+        new LoginFrame();
+    }
+
+
+
+// ... [Rest of the code is unchanged and will not be shown for brevity]
+
