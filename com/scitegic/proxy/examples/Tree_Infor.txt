@@ -9,26 +9,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class Tree_Infor {
+    private static PipelinePilotServer pp;
+    private static JobPane jobPane;
 
-    static final String WEB_PORT_EXAMPLE_PROTOCOLS = "Protocols/Web Services/Web Port Examples";
-
-    public Tree_Infor() {
-    }
-
-    private static DefaultMutableTreeNode buildTreeRecursive(XmldbItem folder, int indent) {
-        if (folder.getName().toLowerCase().equals("utilities")) {
-            return null;
-        }
+    private static DefaultMutableTreeNode buildTreeRecursive(XmldbItem folder) {
         DefaultMutableTreeNode currentFolder = new DefaultMutableTreeNode(folder.getName());
-        indent += 2;
         XmldbItem[] children = folder.getChildren();
-        for (int i = 0, m = children.length; i < m; i++) {
-            XmldbItem child = children[i];
+        for (XmldbItem child : children) {
             if (child.isFolder()) {
-                DefaultMutableTreeNode childFolder = buildTreeRecursive(child, indent);
-                if (childFolder != null) {
-                    currentFolder.add(childFolder);
-                }
+                currentFolder.add(buildTreeRecursive(child));
             } else {
                 currentFolder.add(new DefaultMutableTreeNode(child.getName()));
             }
@@ -45,13 +34,12 @@ public class Tree_Infor {
         String user = args[1];
         String password = args[2];
 
-        PipelinePilotServer pp = null;
-
         try {
             pp = new PipelinePilotServer(server, user, password);
+            XmldbItem rootFolder = pp.getComponentDatabase().getXmldbContents();
+            DefaultMutableTreeNode treeRoot = buildTreeRecursive(rootFolder);
 
-            XmldbItem rootFolder = pp.getComponentDatabase().getXmldbContentsRecursive(WEB_PORT_EXAMPLE_PROTOCOLS);
-            DefaultMutableTreeNode treeRoot = buildTreeRecursive(rootFolder, 0);
+            jobPane = new JobPane(pp);
 
             SwingUtilities.invokeLater(() -> {
                 JFrame frame = new JFrame("File Structure");
@@ -60,24 +48,27 @@ public class Tree_Infor {
 
                 JTree tree = new JTree(treeRoot);
                 JScrollPane scrollPane = new JScrollPane(tree);
-                frame.add(scrollPane, BorderLayout.CENTER);
+                frame.add(scrollPane, BorderLayout.WEST);
+
+                frame.add(jobPane, BorderLayout.CENTER);
 
                 tree.addMouseListener(new MouseAdapter() {
                     public void mouseClicked(MouseEvent me) {
                         TreePath tp = tree.getPathForLocation(me.getX(), me.getY());
-                        if (tp != null && tp.getLastPathComponent() != null) {
-                            String filename = tp.getLastPathComponent().toString();
-                            // When a file is clicked in the tree, show the corresponding job pane
-                            JobPane.showJobPane(filename);
+                        if (tp != null) {
+                            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp.getLastPathComponent();
+                            if (node.isLeaf()) {
+                                String selectedFile = node.getUserObject().toString();
+                                jobPane.showJobPane(selectedFile);
+                            }
                         }
                     }
                 });
 
-                frame.setSize(500, 500);
+                frame.setSize(800, 600);
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
             });
-
         } catch (Exception e) {
             e.printStackTrace();
         }

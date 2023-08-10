@@ -1,0 +1,137 @@
+package com.scitegic.proxy.examples;
+
+import com.scitegic.proxy.*;
+
+import javax.swing.*;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+public class TreeAndJobPane {
+    private static PipelinePilotServer pp;
+    private static JobPane jobPane;
+
+    static final String WEB_PORT_EXAMPLE_PROTOCOLS = "Protocols/Web Services/Web Port Examples";
+
+    public static void main(String[] args) {
+        if (args.length < 3) {
+            return;
+        }
+
+        String server = args[0];
+        String user = args[1];
+        String password = args[2];
+
+        try {
+            pp = new PipelinePilotServer(server, user, password);
+            XmldbItem rootFolder = pp.getComponentDatabase().getXmldbContentsRecursive(WEB_PORT_EXAMPLE_PROTOCOLS);
+            DefaultMutableTreeNode treeRoot = buildTreeRecursive(rootFolder);
+
+            jobPane = new JobPane(pp);
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("File Structure");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setLayout(new BorderLayout());
+
+                JTree tree = new JTree(treeRoot);
+                JScrollPane scrollPane = new JScrollPane(tree);
+
+                JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, jobPane);
+                splitPane.setDividerLocation(300);
+                frame.add(splitPane, BorderLayout.CENTER);
+
+                tree.addMouseListener(new MouseAdapter() {
+                    public void mouseClicked(MouseEvent me) {
+                        TreePath tp = tree.getPathForLocation(me.getX(), me.getY());
+                        if (tp != null) {
+                            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp.getLastPathComponent();
+                            if (node.isLeaf()) {
+                                String selectedFile = node.getUserObject().toString();
+                                jobPane.showJobPane(selectedFile);
+                            }
+                        }
+                    }
+                });
+
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static DefaultMutableTreeNode buildTreeRecursive(XmldbItem folder) {
+        DefaultMutableTreeNode currentFolder = new DefaultMutableTreeNode(folder.getName());
+        XmldbItem[] children = folder.getChildren();
+        for (XmldbItem child : children) {
+            if (child.isFolder()) {
+                currentFolder.add(buildTreeRecursive(child));
+            } else {
+                currentFolder.add(new DefaultMutableTreeNode(child.getName()));
+            }
+        }
+        return currentFolder;
+    }
+
+    static class JobPane extends JPanel {
+        private PipelinePilotServer pp;
+
+        private JTextField nameField, detailsField, sourceField, xPropertyField, yPropertyField, fileTypeField, tooltipField;
+        private JButton submitButton;
+
+        public JobPane(PipelinePilotServer pp) {
+            this.pp = pp;
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            setupUI();
+        }
+
+        private void setupUI() {
+            nameField = new JTextField(20);
+            detailsField = new JTextField(20);
+            sourceField = new JTextField(20);
+            xPropertyField = new JTextField(20);
+            yPropertyField = new JTextField(20);
+            fileTypeField = new JTextField(20);
+            tooltipField = new JTextField(20);
+
+            submitButton = new JButton("Submit");
+            submitButton.addActionListener(e -> submitData());
+
+            add(new JLabel("Name:"));
+            add(nameField);
+            add(new JLabel("Details:"));
+            add(detailsField);
+            add(new JLabel("Source:"));
+            add(sourceField);
+            add(new JLabel("X Property:"));
+            add(xPropertyField);
+            add(new JLabel("Y Property:"));
+            add(yPropertyField);
+            add(new JLabel("File Type:"));
+            add(fileTypeField);
+            add(new JLabel("Tooltip:"));
+            add(tooltipField);
+            add(submitButton);
+        }
+
+        public void showJobPane(String filename) {
+            nameField.setText("Name for " + filename);
+            detailsField.setText("Details for " + filename);
+            sourceField.setText(filename);
+            xPropertyField.setText("X Property Value");
+            yPropertyField.setText("Y Property Value");
+            fileTypeField.setText("PDF");
+            tooltipField.setText("Tooltip for " + filename);
+        }
+
+        private void submitData() {
+            // Here you can send the data from the fields to the server.
+            // This is a placeholder for now.
+            System.out.println("Data submitted for " + nameField.getText());
+        }
+    }
+}
