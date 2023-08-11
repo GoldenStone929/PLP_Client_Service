@@ -1,0 +1,81 @@
+package com.scitegic.proxy.examples;
+
+import com.scitegic.proxy.*;
+import javax.swing.*;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+
+public class TestGUI {
+
+    private JFrame mainFrame;
+    private JTree plpTree;
+    private JTextArea consoleOutput; // New JTextArea for console-like information
+
+    private final static String ROOT = "Root";
+
+    public TestGUI() {
+        createTopGUI();
+    }
+
+    private void createTopGUI() {
+        mainFrame = new JFrame("TestGUI");
+        mainFrame.setSize(600, 400);
+        mainFrame.setLayout(new GridLayout(1, 2));
+
+        consoleOutput = new JTextArea(); // Initialize the JTextArea
+        consoleOutput.setEditable(false); // Set it to read-only
+        consoleOutput.setRows(5); // Set the height (in rows)
+        JScrollPane scrollPane = new JScrollPane(consoleOutput); // Add scrolling to the JTextArea
+        mainFrame.add(scrollPane, BorderLayout.SOUTH); // Add the JTextArea to the main frame at the bottom
+
+        // ... (The rest of the logic for this method)
+    }
+
+    private void createLeftPanel() {
+        // ... (The rest of the logic for this method)
+    }
+
+    private void createRightPanel() {
+        // ... (The rest of the logic for this method)
+    }
+
+    private void addPLPTree() {
+        // ... (The rest of the logic for this method)
+    }
+
+    private void refreshPLPTree() {
+        // ... (The rest of the logic for this method)
+    }
+
+    private void listProtocolInfo(String protocolName) {
+        // ... (The rest of the logic for this method)
+    }
+
+    private void addParameters(ParameterInfo para) {
+        // ... (The rest of the logic for this method)
+    }
+
+    private void submitJob() {
+        // ... (The rest of the logic for this method)
+    }
+
+    public static void main(String[] args) {
+        Login loginForm = new Login();
+        loginForm.waitForLogin();
+
+        if (Login.isUserValid) {
+            new TestGUI();
+        } else {
+            System.exit(0); // Exit the application if login fails
+        }
+    }
+
+    // ... (Any other methods or inner classes you have)
+
+    // New method to append messages to the JTextArea
+    public void appendToConsole(String message) {
+        consoleOutput.append(message + "\n");
+    }
+}

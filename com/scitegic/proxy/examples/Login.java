@@ -34,6 +34,17 @@ public class Login extends JFrame {
         this.setIconImage(image);
 //        frame.setIconImage(image);
 
+        this.setSize(new Dimension(450, 220));
+        this.setMinimumSize(new Dimension(420, 220));
+
+        // Setting background image using JLabel
+//        JLabel backgroundLabel = new JLabel(BHTIcon);
+//        setLayout(new BorderLayout());
+//        add(backgroundLabel);
+//        backgroundLabel.setLayout(new FlowLayout());
+
+
+
         serverAddressField = new JTextField(20);
         usernameField = new JTextField(20);
         passwordField = new JPasswordField(20);
@@ -109,6 +120,7 @@ public class Login extends JFrame {
         mainPanel.add(passwordPanel);
         mainPanel.add(loginButton);
         mainPanel.add(new JScrollPane(infoTextArea));
+
 
 
         add(mainPanel);

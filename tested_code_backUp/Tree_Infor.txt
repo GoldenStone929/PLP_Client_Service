@@ -1,0 +1,76 @@
+package com.scitegic.proxy.examples;
+
+import com.scitegic.proxy.*;
+
+import javax.swing.*;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+public class Tree_Infor {
+    private static PipelinePilotServer pp;
+    private static JobPane jobPane;
+
+    private static DefaultMutableTreeNode buildTreeRecursive(XmldbItem folder) {
+        DefaultMutableTreeNode currentFolder = new DefaultMutableTreeNode(folder.getName());
+        XmldbItem[] children = folder.getChildren();
+        for (XmldbItem child : children) {
+            if (child.isFolder()) {
+                currentFolder.add(buildTreeRecursive(child));
+            } else {
+                currentFolder.add(new DefaultMutableTreeNode(child.getName()));
+            }
+        }
+        return currentFolder;
+    }
+
+    public static void main(String[] args) {
+        if (args.length < 3) {
+            return;
+        }
+
+        String server = args[0];
+        String user = args[1];
+        String password = args[2];
+
+        try {
+            pp = new PipelinePilotServer(server, user, password);
+            XmldbItem rootFolder = pp.getComponentDatabase().getXmldbContents();
+            DefaultMutableTreeNode treeRoot = buildTreeRecursive(rootFolder);
+
+            jobPane = new JobPane(pp);
+
+            SwingUtilities.invokeLater(() -> {
+                JFrame frame = new JFrame("File Structure");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setLayout(new BorderLayout());
+
+                JTree tree = new JTree(treeRoot);
+                JScrollPane scrollPane = new JScrollPane(tree);
+                frame.add(scrollPane, BorderLayout.WEST);
+
+                frame.add(jobPane, BorderLayout.CENTER);
+
+                tree.addMouseListener(new MouseAdapter() {
+                    public void mouseClicked(MouseEvent me) {
+                        TreePath tp = tree.getPathForLocation(me.getX(), me.getY());
+                        if (tp != null) {
+                            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp.getLastPathComponent();
+                            if (node.isLeaf()) {
+                                String selectedFile = node.getUserObject().toString();
+                                jobPane.showJobPane(selectedFile);
+                            }
+                        }
+                    }
+                });
+
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

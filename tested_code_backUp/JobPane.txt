@@ -1,0 +1,51 @@
+package com.scitegic.proxy.examples;
+
+import com.scitegic.proxy.PipelinePilotServer;
+import com.scitegic.proxy.Job;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class JobPane extends JPanel {
+    private PipelinePilotServer pp;
+    private JLabel nameLabel, detailsLabel, sourceLabel, xPropertyLabel, yPropertyLabel, fileTypeLabel, tooltipLabel;
+
+    public JobPane(PipelinePilotServer pp) {
+        this.pp = pp;
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setupUI();
+    }
+
+    private void setupUI() {
+        nameLabel = new JLabel();
+        detailsLabel = new JLabel();
+        sourceLabel = new JLabel();
+        xPropertyLabel = new JLabel();
+        yPropertyLabel = new JLabel();
+        fileTypeLabel = new JLabel();
+        tooltipLabel = new JLabel();
+
+        add(nameLabel);
+        add(detailsLabel);
+        add(sourceLabel);
+        add(xPropertyLabel);
+        add(yPropertyLabel);
+        add(fileTypeLabel);
+        add(tooltipLabel);
+    }
+
+    public void showJobPane(String filename) {
+        // Here, you'd fetch data from the server based on the filename.
+        // For now, I'm just using mock data for demonstration purposes.
+        nameLabel.setText("Name: " + "Name for " + filename);
+        detailsLabel.setText("Details: " + "Details for " + filename);
+        sourceLabel.setText("Source: " + filename);
+        xPropertyLabel.setText("X Property: " + "X Property Value");
+        yPropertyLabel.setText("Y Property: " + "Y Property Value");
+        fileTypeLabel.setText("File Type: " + "PDF");
+        tooltipLabel.setText("Tooltip: " + "Tooltip for " + filename);
+
+        revalidate();
+        repaint();
+    }
+}

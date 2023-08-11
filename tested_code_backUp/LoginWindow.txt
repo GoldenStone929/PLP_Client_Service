@@ -1,0 +1,100 @@
+package com.scitegic.proxy.examples;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.JPasswordField;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import com.cloudera.pipelinepilot.server.PipelinePilotServer;
+
+public class LoginWindow {
+
+    private JTextField serverAddressField;
+    private JTextField nameField;
+    private JPasswordField passwordField;
+    private JButton loginButton;
+    private JLabel messageLabel;
+
+    public LoginWindow() {
+        super("Login");
+
+        setLayout(new GridBagLayout());
+
+        serverAddressField = new JTextField();
+        nameField = new JTextField();
+        passwordField = new JPasswordField();
+        loginButton = new JButton("Login");
+        messageLabel = new JLabel("");
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(5, 5, 5, 5);
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.anchor = GridBagConstraints.WEST;
+        add(new JLabel("Server address:"), constraints);
+
+        constraints.gridx = 1;
+        constraints.gridy = 0;
+        constraints.weightx = 1.0;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        add(serverAddressField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        constraints.anchor = GridBagConstraints.WEST;
+        add(new JLabel("Name:"), constraints);
+
+        constraints.gridx = 1;
+        constraints.gridy = 1;
+        constraints.weightx = 1.0;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        add(nameField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        constraints.anchor = GridBagConstraints.WEST;
+        add(new JLabel("Password:"), constraints);
+
+        constraints.gridx = 1;
+        constraints.gridy = 2;
+        constraints.weightx = 1.0;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        add(passwordField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        constraints.gridwidth = 2;
+        constraints.anchor = GridBagConstraints.CENTER;
+        add(loginButton, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        constraints.gridwidth = 2;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        add(messageLabel, constraints);
+
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String serverAddress = serverAddressField.getText();
+                String name = nameField.getText();
+                String password = new String(passwordField.getPassword());
+
+                try {
+                    PipelinePilotServer pp = new PipelinePilotServer(serverAddress, name, password);
+                    pp.connect();
+                    messageLabel.setText("Login successful!");
+                } catch (Exception ex) {
+                    messageLabel.setText("Login failed: " + ex.getMessage());
+                }
+            }
+        });
+
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+}
