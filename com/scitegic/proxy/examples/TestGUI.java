@@ -18,9 +18,10 @@ import javax.swing.JFileChooser;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Dimension;
 
 import java.io.File;
 import java.net.URL;
@@ -52,6 +53,9 @@ public class TestGUI {
 	private Job protocol = null;
 	private ComponentDatabase compdb = null;
 	private XmldbItem rootFolder = null;
+
+	private JTextArea ResultLabel;  // Declare ResultLabel as an instance variable
+
 
 	// selected protocol info
 	private String selectedProtocolName    = null;
@@ -110,87 +114,66 @@ public class TestGUI {
 			}
 		} 
 	}
-	
-	/*
-	private void findXmldbItemRecursive(XmldbItem node, String nodeName) {  // search for a protocol node under the parent node
 
-		if (node.isFolder()) {
-			XmldbItem[] children = node.getChildren();
-			
-			for (int i = 0; i < children.length; i++) {
-				
-				XmldbItem childNode = children[i];
-				
-				if ( childNode.isFolder() == false ) {
-					if (childNode.getName().equals(nodeName)) {
-						selectedXmldbItem = childNode;
-						return;
-					} else {
-						continue;
-					}
-				} else {
-					findXmldbItemRecursive(childNode, nodeName);  // recursive call
-				}
-			}
-		} 
-
-	}
-	*/
-	
-	
 	public void addPLPTree() {
-		
 		try {
-			pp         = new PipelinePilotServer("10.30.50.184:9944", "zhengweipeng", "Slaysalon2~");
-			conf       = pp.getServerConfig();
-			compdb     = pp.getComponentDatabase();
+			pp = new PipelinePilotServer(Login.Global.serverAddress, Login.Global.username, Login.Global.password);
+			conf = pp.getServerConfig();
+			compdb = pp.getComponentDatabase();
 			rootFolder = compdb.getXmldbContentsRecursive(WEB_PORT_EXAMPLE_PROTOCOLS);
-			
+
 			System.out.println(rootFolder.getName());
-			
-			rootTreeNode = new DefaultMutableTreeNode(rootFolder.getName());  // the top treeNode. It will not showing up in the Jtree
-			
-			myTree = new JTree(rootTreeNode);                                 // create a JTree GUI to interact with user
-			
-			myTree.addTreeSelectionListener(new TreeSelectionListener() {     // respond to user selection on a tree node
-				
+
+			rootTreeNode = new DefaultMutableTreeNode(rootFolder.getName());  // the top treeNode. It will not show up in the JTree
+			myTree = new JTree(rootTreeNode);  // create a JTree GUI to interact with user
+			myTree.setBackground(Color.WHITE);  // Set background color of the JTree to white
+
+			JScrollPane treeScrollPane = new JScrollPane(myTree);
+			treeScrollPane.getViewport().setBackground(Color.WHITE);
+
+			// Set scroll bars' background color to white
+			treeScrollPane.getHorizontalScrollBar().setBackground(Color.WHITE);
+			treeScrollPane.getVerticalScrollBar().setBackground(Color.WHITE);
+
+			panelLeftMiddle.add(treeScrollPane, BorderLayout.CENTER);
+
+			// Set the panel's background color to white
+			panelLeftMiddle.setBackground(Color.WHITE);
+
+			myTree.addTreeSelectionListener(new TreeSelectionListener() {
 				public void valueChanged(TreeSelectionEvent e) {
-			        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) myTree.getLastSelectedPathComponent();
-
-			    /* if nothing is selected */ 
-			        if (selectedNode == null) return;
-
-			    /* retrieve the node that was selected */ 
-			        Object nodeInfo = selectedNode.getUserObject();
-			        listProtocolInfo(nodeInfo.toString());                   // report the protocol info on a selected tree
-			        return;
-			    }
+					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) myTree.getLastSelectedPathComponent();
+					if (selectedNode == null) return;
+					Object nodeInfo = selectedNode.getUserObject();
+					listProtocolInfo(nodeInfo.toString());  // report the protocol info on a selected tree
+					return;
+				}
 			});
-			
-			
+
 			addFolderTreeRecursive(rootFolder, rootTreeNode);
-			
-			panelLeftMiddle.add(myTree);
-			
+
 			labelRight.setText("Show which tree node is clicked by user.");
-		
-			
+
+			// Refresh the panel to reflect the changes
+			panelLeftMiddle.revalidate();
+			panelLeftMiddle.repaint();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			// Remove the job from the server
 			if (protocol != null) {
 				try {
-					//System.out.println("Deleting job " + protocol.getJobId());
 					protocol.releaseJob();
 				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 			}
 		}
-		
 	}
-	
-	
+
+
+
+
 	private void refreshPLPTree() {    // not working yet
 		
 		rootTreeNode.removeAllChildren();    // clear the treeNode model
@@ -209,8 +192,7 @@ public class TestGUI {
 
 		
 		addFolderTreeRecursive(rootFolder, rootTreeNode);  // re-populate the treeNode model
-		
-		
+
 		// 
 		myTree = new JTree(rootTreeNode);
 		myTree.addTreeSelectionListener(new TreeSelectionListener() {     // respond to user selection on a tree node
@@ -290,25 +272,35 @@ public class TestGUI {
 		selectedProtocolName = protocolName;
 		selectedJob          = pp.createJob(protocolName);
 		selectedCmptInfo     = selectedJob.getComponentInfo();
-		
-		System.out.println(selectedCmptInfo.getFullName());
-		
-		JLabel nameL = new JLabel("Protocol Name:");
-		panelRightTop.add(nameL);
-		
-		JTextArea nameLabel = new JTextArea(0, 1);
-		nameLabel.setText(protocolName);
-		nameLabel.setLineWrap(true);
-		panelRightTop.add(nameLabel);
-		
+
+// For Protocol Name
+			JLabel nameL = new JLabel("Protocol Name:");
+			panelRightTop.add(nameL);
+			JTextArea nameLabel = new JTextArea(0, 1);
+			nameLabel.setText(protocolName);
+			nameLabel.setLineWrap(true);
+			panelRightTop.add(nameLabel);
+
+
+
 		JLabel descriptionL = new JLabel("Description:");
 		panelRightTop.add(descriptionL);
-		
 		JTextArea descriptionLabel = new JTextArea(0, 1);
 		descriptionLabel.setText(selectedCmptInfo.getDescription());
 		descriptionLabel.setLineWrap(true);
 		panelRightTop.add(descriptionLabel);
-		
+
+// ------------------ add a text area to display the result of a protocol ------------------
+
+			// For Result
+			JLabel ResultL = new JLabel("Result:");
+			panelRightTop.add(ResultL);
+			ResultLabel = new JTextArea(0, 1);  // Initialize ResultLabel
+			ResultLabel.setLineWrap(true);
+			panelRightTop.add(ResultLabel);
+
+
+
 		panelRightTop.revalidate();
 		panelRightTop.repaint();
 		
@@ -381,14 +373,21 @@ public class TestGUI {
 	}
 
 	private void createTopGUI() {
+		//http://10.30.50.184:9944/
 		frame = new JFrame();
+//		frame.getContentPane().setBackground(Color.WHITE);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		frame.setSize(1200, 800);
+		frame.setTitle("BHT PLP Launcher");
 
 		// Declare the imageIcon variable
 		ImageIcon BHTIcon;
-
 		BHTIcon = new ImageIcon(".\\data\\logo-bht.png");
 		java.awt.Image image = BHTIcon.getImage();
 		frame.setIconImage(image);
+
+
 
 		panelLeft = new JPanel();
 		panelLeft.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
@@ -398,6 +397,16 @@ public class TestGUI {
 		panelRight.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelRight.setLayout(new GridLayout(0, 1));
 		panelRight.setAutoscrolls(true);
+
+
+		// Set equal size for the left and right panels
+		Dimension panelSize = new Dimension(frame.getWidth() / 2, frame.getHeight());
+		panelLeft.setPreferredSize(panelSize);
+		panelRight.setPreferredSize(panelSize);
+
+		// Add a border to the left panel for separation
+		panelLeft.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
+
 
 		createLeftPanel();
 		createRightPanel();
@@ -423,19 +432,22 @@ public class TestGUI {
 		panelLeftMiddle = new JPanel();
 		panelLeftMiddle.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		//panelLeftMiddle.setLayout(new BoxLayout(panelLeftMiddle, BoxLayout.PAGE_AXIS));
-		panelLeftMiddle.setLayout(new BorderLayout(0, 1));
-		
+//		panelLeftMiddle.setLayout(new BorderLayout(0, 1));
+		panelLeftMiddle.setLayout(new BorderLayout());
+
+
+
 		panelLeftBottom = new JPanel();
 		panelLeftBottom.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelLeftBottom.setLayout(new BoxLayout(panelLeftBottom, BoxLayout.PAGE_AXIS));
 		
-		buttonLeftTop = new JButton("Refresh the JTree (to be implemented)");
+		buttonLeftTop = new JButton("Refresh JTree");
 		buttonLeftTop.addActionListener(myListner);
-		panelLeftTop.add(buttonLeftTop, BorderLayout.PAGE_START); 
+		panelLeftTop.add(buttonLeftTop, BorderLayout.PAGE_START);
 		
 		buttonLeftBottom = new JButton("Show protocol error message (to be implemented)");
 		buttonLeftBottom.addActionListener(myListner);
-		panelLeftBottom.add(buttonLeftBottom, BorderLayout.PAGE_END); 
+		panelLeftBottom.add(buttonLeftBottom, BorderLayout.PAGE_END);
 		
 		panelLeft.add(panelLeftTop, BorderLayout.PAGE_START);
 		panelLeft.add(new JScrollPane(panelLeftMiddle), BorderLayout.CENTER);
@@ -465,7 +477,7 @@ public class TestGUI {
 		
 		buttonRightTop = new JButton("Button rightTop (PAGE_START)");
 		buttonRightTop.addActionListener(myListner);
-		panelRightTop.add(buttonRightTop, BorderLayout.PAGE_START); 
+		panelRightTop.add(buttonRightTop, BorderLayout.PAGE_START);
 		
 		buttonRightBottom = new JButton("Submit Job");
 		buttonRightBottom.addActionListener(myListner);
@@ -549,8 +561,8 @@ public void setProtocolParametersfromGUI() {
 			if (JobStatus.Finished.equals(status)) {
 				// get returned global variables as webport result.
 				String message = prr.getWebExportResult("Message");
-				System.out.println("returned Message is " + message);
-				
+//				System.out.println("returned Message is " + message);
+				ResultLabel.append("returned Message is " + message + "\n");
 				
 				// get results as files.
 				String[] results = prr.getResultFiles();
