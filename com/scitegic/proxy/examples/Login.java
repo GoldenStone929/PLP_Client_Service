@@ -46,6 +46,10 @@ public class Login extends JFrame {
 
 
         serverAddressField = new JTextField(20);
+        //set server Address default to "http://10.30.50.184:9944/"
+        serverAddressField.setText("http://10.30.50.184:9944/");
+
+
         usernameField = new JTextField(20);
         passwordField = new JPasswordField(20);
         infoTextArea = new JTextArea(5, 20);

@@ -1,5 +1,7 @@
 package com.scitegic.proxy.examples;
-import com.scitegic.proxy.examples.Login;
+import javax.swing.text.DefaultCaret;
+import java.awt.Component;
+import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -118,7 +120,9 @@ public class TestGUI {
 
 	public void addPLPTree() {
 		try {
-			pp = new PipelinePilotServer(Login.Global.serverAddress, Login.Global.username, Login.Global.password);
+//			pp = new PipelinePilotServer(Login.Global.serverAddress, Login.Global.username, Login.Global.password);
+			pp = new PipelinePilotServer("http://10.30.50.184:9944/", "ShawnCui", Login.Global.password);
+
 			conf = pp.getServerConfig();
 			compdb = pp.getComponentDatabase();
 			rootFolder = compdb.getXmldbContentsRecursive(WEB_PORT_EXAMPLE_PROTOCOLS);
@@ -275,24 +279,38 @@ public class TestGUI {
 		panelRightMiddle.repaint();
 
 		try {
-
 			selectedProtocolName = protocolName;
 			selectedJob          = pp.createJob(protocolName);
 			selectedCmptInfo     = selectedJob.getComponentInfo();
 
-			// For Protocol Name
+			// For Protocol Name -----------------------------------------------------------
 			JLabel nameL = new JLabel("Protocol Name:");
 			JTextArea nameLabel = new JTextArea(0, 1);
-			nameLabel.setText(protocolName);
-			nameLabel.setLineWrap(true);
+			nameLabel.setText(protocolName); // Set the text of the label to the protocol name
+			nameLabel.setLineWrap(true); // Ensuring words don't get cut off
 			nameLabel.setWrapStyleWord(true); // Ensuring words don't get cut off
+			nameLabel.setEditable(false); // Ensuring the user can't edit the text
+//			nameLabel.setBackground(Color.BLUE); // Ensuring the background is white
+			// make the length maximum to 1 line
+			nameLabel.setMaximumSize(new Dimension(Short.MAX_VALUE, nameLabel.getPreferredSize().height));
+			nameLabel.setBorder(BorderFactory.createLineBorder(Color.cyan));
 
-			// For Description
+			// For Description -----------------------------------------------------------
 			JLabel descriptionL = new JLabel("Description:");
 			JTextArea descriptionLabel = new JTextArea(0, 1);
 			descriptionLabel.setText(selectedCmptInfo.getDescription());
 			descriptionLabel.setLineWrap(true);
 			descriptionLabel.setWrapStyleWord(true); // Ensuring words don't get cut off
+			descriptionLabel.setEditable(false); // Ensuring the user can't edit the text
+			nameLabel.setWrapStyleWord(true); // Ensuring words don't get cut off
+			// init a new color with rgb: R97, G208, B236
+//			Color lightBlue = new Color(97, 208, 236);
+			descriptionLabel.setBorder(BorderFactory.createLineBorder(Color.cyan));
+			descriptionLabel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 100));
+
+
+
+
 
 			// Add the components to a panel with BoxLayout for vertical alignment
 			JPanel namePanel = new JPanel();
@@ -386,10 +404,16 @@ public class TestGUI {
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.setSize(900, 600);
-		frame.setVisible(true);
-		frame.setResizable(true);
+		frame.setVisible(true); // make the frame visible
+		frame.setResizable(true); // make the frame resizable
 		frame.setMinimumSize(new Dimension(600, 400));
 		frame.setTitle("BHT PLP Launcher");
+		frame.setLocationRelativeTo(null); // center the frame
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // close the frame when the user clicks the close button
+		//default color change from light grey to all page white
+		frame.getContentPane().setBackground(Color.WHITE);
+
+		frame.setFont(new Font("Courier New", Font.PLAIN, 12));
 
 		// Declare the imageIcon variable
 		ImageIcon BHTIcon;
@@ -441,8 +465,6 @@ public class TestGUI {
 		
 		panelLeftMiddle = new JPanel();
 		panelLeftMiddle.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
-		//panelLeftMiddle.setLayout(new BoxLayout(panelLeftMiddle, BoxLayout.PAGE_AXIS));
-//		panelLeftMiddle.setLayout(new BorderLayout(0, 1));
 		panelLeftMiddle.setLayout(new BorderLayout());
 
 
@@ -471,6 +493,9 @@ public class TestGUI {
 		panelRightTop = new JPanel();
 		panelRightTop.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelRightTop.setLayout(new BoxLayout(panelRightTop, BoxLayout.PAGE_AXIS));
+//		panelRightTop.setBackground(Color.WHITE);
+//		panelRightTop.setOpaque(true); // this is needed to make the background color visible
+//		panelRightTop.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
 
 		panelRightMiddle = new JPanel();
 		panelRightMiddle.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
@@ -498,10 +523,31 @@ public class TestGUI {
 		panelRightBottom.add(ResultL);
 		ResultLabel = new JTextArea(0, 1);  // Initialize ResultLabel
 		ResultLabel.setLineWrap(true);
+		ResultLabel.setWrapStyleWord(true);
+		ResultLabel.setEditable(false);
+		ResultLabel.setEditable(false);
+		ResultLabel.setBorder(BorderFactory.createLineBorder(Color.cyan));
+		ResultLabel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 100));
+
+		//center the textarea
+		DefaultCaret caret = (DefaultCaret)ResultLabel.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		// make sure it is in the middle based on Jframe resize
+
+
+
+
+
 		panelRightBottom.add(ResultLabel);
 
+
+
+
+
+
+
 	}
-	
+
 public void setProtocolParametersfromGUI() {
 		
 		ParameterInfo[] params = selectedCmptInfo.getParameters();
@@ -601,18 +647,11 @@ public void setProtocolParametersfromGUI() {
 						//System.out.println(localResultFile.getAbsolutePath());  // local file full path
 					}
 					System.out.println();
-
-					// download, locally, the first result file
-					//File localResultFile = new File("output.sdf");
-					//File localResultFile = new File("chart.htm");
-					//System.out.print("Writing result file to ");
-					//System.out.println(localResultFile.getAbsolutePath());
-					//System.out.println();
-
-					//pp.getRemoteFileManager().downloadFile(results[0], localResultFile);
+				} else {
+//					System.out.println("No job results");
+					//print out in Jframe
+					ResultLabel.append("No job results" + "\n");
 				}
-
-				
 
 			} else {
 				System.out.println("Getting job errors results");
