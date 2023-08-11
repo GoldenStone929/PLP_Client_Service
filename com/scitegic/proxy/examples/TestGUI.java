@@ -22,7 +22,8 @@ import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Dimension;
-
+import java.awt.FlowLayout;
+import java.awt.Image;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
@@ -261,81 +262,81 @@ public class TestGUI {
 		}
 			
 	}
-	
-	
+
+
 	public void listProtocolInfo(String protocolName) {
-		
+
 		panelRightTop.removeAll();  // refresh it for each protocol selected by user
 		panelRightTop.revalidate();
 		panelRightTop.repaint();
-		
+
 		panelRightMiddle.removeAll();  // refresh it for each protocol selected by user
 		panelRightMiddle.revalidate();
 		panelRightMiddle.repaint();
-		
-		try {
-			
-		selectedProtocolName = protocolName;
-		selectedJob          = pp.createJob(protocolName);
-		selectedCmptInfo     = selectedJob.getComponentInfo();
 
-// For Protocol Name
+		try {
+
+			selectedProtocolName = protocolName;
+			selectedJob          = pp.createJob(protocolName);
+			selectedCmptInfo     = selectedJob.getComponentInfo();
+
+			// For Protocol Name
 			JLabel nameL = new JLabel("Protocol Name:");
-			panelRightTop.add(nameL);
 			JTextArea nameLabel = new JTextArea(0, 1);
 			nameLabel.setText(protocolName);
 			nameLabel.setLineWrap(true);
-			panelRightTop.add(nameLabel);
+			nameLabel.setWrapStyleWord(true); // Ensuring words don't get cut off
 
+			// For Description
+			JLabel descriptionL = new JLabel("Description:");
+			JTextArea descriptionLabel = new JTextArea(0, 1);
+			descriptionLabel.setText(selectedCmptInfo.getDescription());
+			descriptionLabel.setLineWrap(true);
+			descriptionLabel.setWrapStyleWord(true); // Ensuring words don't get cut off
 
-// for Description
-		JLabel descriptionL = new JLabel("Description:");
-		panelRightTop.add(descriptionL);
-		JTextArea descriptionLabel = new JTextArea(0, 1);
-		descriptionLabel.setText(selectedCmptInfo.getDescription());
-		descriptionLabel.setLineWrap(true);
-		panelRightTop.add(descriptionLabel);
+			// Add the components to a panel with BoxLayout for vertical alignment
+			JPanel namePanel = new JPanel();
+			namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.PAGE_AXIS));
+			namePanel.add(nameL);
+			namePanel.add(nameLabel);
 
-// ------------------ add a text area to display the result of a protocol ------------------
+			JPanel descriptionPanel = new JPanel();
+			descriptionPanel.setLayout(new BoxLayout(descriptionPanel, BoxLayout.PAGE_AXIS));
+			descriptionPanel.add(descriptionL);
+			descriptionPanel.add(descriptionLabel);
 
-			// For Result
-//			JLabel ResultL = new JLabel("Result:");
-//			panelRightTop.add(ResultL);
-//			ResultLabel = new JTextArea(0, 1);  // Initialize ResultLabel
-//			ResultLabel.setLineWrap(true);
-//			panelRightTop.add(ResultLabel);
+			panelRightTop.add(namePanel);
+			panelRightTop.add(descriptionPanel);
 
+			panelRightTop.revalidate();
+			panelRightTop.repaint();
 
+			ParameterInfo[] params = selectedCmptInfo.getParameters();
 
-		panelRightTop.revalidate();
-		panelRightTop.repaint();
-		
-		ParameterInfo[] params = selectedCmptInfo.getParameters();
-		
-		
-		for (int i=0; i<params.length; ++i) {
-			ParameterInfo para = params[i];
+			for (int i=0; i<params.length; ++i) {
+				ParameterInfo para = params[i];
 
-			if (InSkipSet(para.getName()) == false) {    // ignore a few irrelevant PLP parameters.
-				addParameters(para);
+				if (InSkipSet(para.getName()) == false) {    // ignore a few irrelevant PLP parameters.
+					addParameters(para);
+				}
 			}
-		}
-		
-		//selectedProtocol = null;    // keep it for job submission
-		return;
-		
+
+			return;
+
 		} catch (Exception e) {
-			//e.printStackTrace();
 			selectedProtocolName = null;
 			selectedXmldbItem    = null;    // clicked on a non-protocol treeNode. clear selectedProtocol
 			selectedJob          = null;
 			selectedCmptInfo     = null;
-			
+
 			return;
 		}
 	}
-	
-	
+
+
+
+
+
 	public void addParameters(ParameterInfo para) {
 
 		String [] legals = para.getLegalValues();
@@ -384,7 +385,10 @@ public class TestGUI {
 //		frame.getContentPane().setBackground(Color.WHITE);
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		frame.setSize(1200, 800);
+		frame.setSize(900, 600);
+		frame.setVisible(true);
+		frame.setResizable(true);
+		frame.setMinimumSize(new Dimension(600, 400));
 		frame.setTitle("BHT PLP Launcher");
 
 		// Declare the imageIcon variable
@@ -430,7 +434,7 @@ public class TestGUI {
 
 
 	private void createLeftPanel() {
-		
+
 		panelLeftTop = new JPanel();
 		panelLeftTop.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelLeftTop.setLayout(new BoxLayout(panelLeftTop, BoxLayout.PAGE_AXIS));
@@ -462,29 +466,29 @@ public class TestGUI {
 		addPLPTree();
 		
 	}
-	
+
 	private void createRightPanel() {
 		panelRightTop = new JPanel();
 		panelRightTop.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelRightTop.setLayout(new BoxLayout(panelRightTop, BoxLayout.PAGE_AXIS));
-		
+
 		panelRightMiddle = new JPanel();
 		panelRightMiddle.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelRightMiddle.setLayout(new BoxLayout(panelRightMiddle, BoxLayout.PAGE_AXIS) );
-		
+
 		panelRightBottom = new JPanel();
 		panelRightBottom.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelRightBottom.setLayout(new BoxLayout(panelRightBottom, BoxLayout.PAGE_AXIS));
-		
+
 		panelRight.add(panelRightTop, BorderLayout.PAGE_START);
 		panelRight.add(panelRightMiddle, BorderLayout.CENTER);
 		panelRight.add(panelRightBottom, BorderLayout.PAGE_END);
-		
-		
+
+
 		buttonRightTop = new JButton("Button rightTop (PAGE_START)");
 		buttonRightTop.addActionListener(myListner);
 		panelRightTop.add(buttonRightTop, BorderLayout.PAGE_START);
-		
+
 		buttonRightBottom = new JButton("Submit Job");
 		buttonRightBottom.addActionListener(myListner);
 		panelRightBottom.add(buttonRightBottom, BorderLayout.PAGE_END);
@@ -495,7 +499,7 @@ public class TestGUI {
 		ResultLabel = new JTextArea(0, 1);  // Initialize ResultLabel
 		ResultLabel.setLineWrap(true);
 		panelRightBottom.add(ResultLabel);
-	
+
 	}
 	
 public void setProtocolParametersfromGUI() {
