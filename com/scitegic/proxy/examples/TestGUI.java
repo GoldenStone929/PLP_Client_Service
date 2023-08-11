@@ -143,12 +143,18 @@ public class TestGUI {
 			myTree.addTreeSelectionListener(new TreeSelectionListener() {
 				public void valueChanged(TreeSelectionEvent e) {
 					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) myTree.getLastSelectedPathComponent();
-					if (selectedNode == null) return;
+
+					// If a node is selected, clear the ResultLabel
+					if (selectedNode != null) {
+						ResultLabel.setText("");
+					}
+
 					Object nodeInfo = selectedNode.getUserObject();
 					listProtocolInfo(nodeInfo.toString());  // report the protocol info on a selected tree
 					return;
 				}
 			});
+
 
 			addFolderTreeRecursive(rootFolder, rootTreeNode);
 
@@ -196,20 +202,20 @@ public class TestGUI {
 		// 
 		myTree = new JTree(rootTreeNode);
 		myTree.addTreeSelectionListener(new TreeSelectionListener() {     // respond to user selection on a tree node
-			
+
 			public void valueChanged(TreeSelectionEvent e) {
 		        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) myTree.getLastSelectedPathComponent();
 
-		    /* if nothing is selected */ 
+		    /* if nothing is selected */
 		        if (selectedNode == null) return;
 
-		    /* retrieve the node that was selected */ 
+		    /* retrieve the node that was selected */
 		        Object nodeInfo = selectedNode.getUserObject();
 		        listProtocolInfo(nodeInfo.toString());                   // report the protocol info on a selected tree
 		        return;
 		    }
 		});
-		
+
 		panelLeftMiddle.add(myTree);
 		
 		myTree.validate();
@@ -282,7 +288,7 @@ public class TestGUI {
 			panelRightTop.add(nameLabel);
 
 
-
+// for Description
 		JLabel descriptionL = new JLabel("Description:");
 		panelRightTop.add(descriptionL);
 		JTextArea descriptionLabel = new JTextArea(0, 1);
@@ -293,11 +299,11 @@ public class TestGUI {
 // ------------------ add a text area to display the result of a protocol ------------------
 
 			// For Result
-			JLabel ResultL = new JLabel("Result:");
-			panelRightTop.add(ResultL);
-			ResultLabel = new JTextArea(0, 1);  // Initialize ResultLabel
-			ResultLabel.setLineWrap(true);
-			panelRightTop.add(ResultLabel);
+//			JLabel ResultL = new JLabel("Result:");
+//			panelRightTop.add(ResultL);
+//			ResultLabel = new JTextArea(0, 1);  // Initialize ResultLabel
+//			ResultLabel.setLineWrap(true);
+//			panelRightTop.add(ResultLabel);
 
 
 
@@ -482,6 +488,13 @@ public class TestGUI {
 		buttonRightBottom = new JButton("Submit Job");
 		buttonRightBottom.addActionListener(myListner);
 		panelRightBottom.add(buttonRightBottom, BorderLayout.PAGE_END);
+
+		// For Result
+		JLabel ResultL = new JLabel("Result:");
+		panelRightBottom.add(ResultL);
+		ResultLabel = new JTextArea(0, 1);  // Initialize ResultLabel
+		ResultLabel.setLineWrap(true);
+		panelRightBottom.add(ResultLabel);
 	
 	}
 	
@@ -650,6 +663,31 @@ public void setProtocolParametersfromGUI() {
 	private class myActionListener implements ActionListener {
 		
 		public void actionPerformed(ActionEvent e) {
+
+			if (e.getSource().equals(buttonRightBottom)) {
+				ResultLabel.setText("");  // Clear the content
+				submitJob();
+				return;
+			}
+
+			if (e.getSource().equals(buttonRightBottom)) {
+				// Check if ResultLabel is already added
+				if (ResultLabel == null) {
+					// For Result
+					JLabel ResultL = new JLabel("Result:");
+					panelRightBottom.add(ResultL);
+					ResultLabel = new JTextArea(0, 1);  // Initialize ResultLabel
+					ResultLabel.setLineWrap(true);
+					panelRightBottom.add(ResultLabel);
+
+					// Refresh the panel
+					panelRightBottom.revalidate();
+					panelRightBottom.repaint();
+				}
+
+				submitJob();
+				return;
+			}
 		
 			if ( e.getSource().equals(buttonLeftTop) ) {     // which object triggers the event?
 				System.out.println("buttonLeftTop was clicked");
