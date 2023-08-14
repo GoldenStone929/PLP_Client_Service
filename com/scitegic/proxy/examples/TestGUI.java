@@ -2,6 +2,7 @@ package com.scitegic.proxy.examples;
 import javax.swing.text.DefaultCaret;
 import java.awt.Insets;
 import javax.swing.border.EmptyBorder;
+import javax.swing.Box;
 import java.awt.Graphics;
 import javax.swing.border.Border;
 import java.awt.Font;
@@ -203,36 +204,36 @@ public class TestGUI {
 
 
 		try {
-		compdb     = pp.getComponentDatabase();      // get the updated PLP component database
-		rootFolder = compdb.getXmldbContentsRecursive(WEB_PORT_EXAMPLE_PROTOCOLS);  // get the updated XmldbItem tree model
+			compdb     = pp.getComponentDatabase();      // get the updated PLP component database
+			rootFolder = compdb.getXmldbContentsRecursive(WEB_PORT_EXAMPLE_PROTOCOLS);  // get the updated XmldbItem tree model
 
 
-		addFolderTreeRecursive(rootFolder, rootTreeNode);  // re-populate the treeNode model
+			addFolderTreeRecursive(rootFolder, rootTreeNode);  // re-populate the treeNode model
 
-		//
-		myTree = new JTree(rootTreeNode);
-		myTree.addTreeSelectionListener(new TreeSelectionListener() {     // respond to user selection on a tree node
+			//
+			myTree = new JTree(rootTreeNode);
+			myTree.addTreeSelectionListener(new TreeSelectionListener() {     // respond to user selection on a tree node
 
-			public void valueChanged(TreeSelectionEvent e) {
-		        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) myTree.getLastSelectedPathComponent();
+				public void valueChanged(TreeSelectionEvent e) {
+					DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) myTree.getLastSelectedPathComponent();
 
-		    /* if nothing is selected */
-		        if (selectedNode == null) return;
+					/* if nothing is selected */
+					if (selectedNode == null) return;
 
-		    /* retrieve the node that was selected */
-		        Object nodeInfo = selectedNode.getUserObject();
-		        listProtocolInfo(nodeInfo.toString());                   // report the protocol info on a selected tree
-		        return;
-		    }
-		});
+					/* retrieve the node that was selected */
+					Object nodeInfo = selectedNode.getUserObject();
+					listProtocolInfo(nodeInfo.toString());                   // report the protocol info on a selected tree
+					return;
+				}
+			});
 
-		panelLeftMiddle.add(myTree);
+			panelLeftMiddle.add(myTree);
 
-		myTree.validate();
-		myTree.repaint();
+			myTree.validate();
+			myTree.repaint();
 
-		panelLeftMiddle.revalidate();     // update the panel hosting the JTree
-		panelLeftMiddle.repaint();        //
+			panelLeftMiddle.revalidate();     // update the panel hosting the JTree
+			panelLeftMiddle.repaint();        //
 
 
 		} catch (Exception e) {
@@ -264,7 +265,7 @@ public class TestGUI {
 			return true;
 		}
 		else if (name.equals("Reporting Stylesheet")) {
-				return true;
+			return true;
 		}
 		else {
 			return false;
@@ -305,23 +306,31 @@ public class TestGUI {
 			selectedJob = pp.createJob(protocolName);
 			selectedCmptInfo = selectedJob.getComponentInfo();
 
-			// For Protocol Name -----------------------------------------------------------
+
+
+
+// For Protocol Name -----------------------------------------------------------
 			JLabel nameL = new JLabel("Protocol Name:");
-			nameL.setBorder(paddingBorder);
+			Border paddingBorderWithSpace = BorderFactory.createEmptyBorder(0, 0, 0, 5); // 增加了5像素的右侧填充
+			nameL.setBorder(paddingBorderWithSpace);
 			JTextArea nameLabel = new JTextArea(0, 30);
 			nameLabel.setText(protocolName);
 			nameLabel.setLineWrap(true);
 			nameLabel.setWrapStyleWord(true);
 			nameLabel.setEditable(false);
+			nameLabel.setBackground(Color.WHITE);
 
-			// For Description -----------------------------------------------------------
+// For Description -----------------------------------------------------------
 			JLabel descriptionL = new JLabel("Description:");
-			descriptionL.setBorder(paddingBorder);
+			Border paddingBorder_des = BorderFactory.createEmptyBorder(0, 0, 3, 5); //
+
+			descriptionL.setBorder(paddingBorder_des);
 			JTextArea descriptionLabel = new JTextArea(0, 30);
 			descriptionLabel.setText(selectedCmptInfo.getDescription());
 			descriptionLabel.setLineWrap(true);
 			descriptionLabel.setWrapStyleWord(true);
 			descriptionLabel.setEditable(false);
+
 
 			Border rounded = new RoundedBorder(5);
 			Border empty = BorderFactory.createEmptyBorder(5, 5, 5, 5);
@@ -341,6 +350,7 @@ public class TestGUI {
 			descriptionPanel.add(descriptionLabel);
 
 			panelRightTop.add(namePanel);
+			panelRightTop.add(Box.createVerticalStrut(10)); // add a spacer
 			panelRightTop.add(descriptionPanel);
 
 			panelRightTop.revalidate();
@@ -461,7 +471,6 @@ public class TestGUI {
 
 
 
-
 	private void createLeftPanel() {
 		// Load the background image
 		ImageIcon imageIcon = new ImageIcon("data/BHT_img.jpg");
@@ -472,8 +481,16 @@ public class TestGUI {
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
-				// Draw the background image
-				g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);
+				// Determine the target width and height as 80% of the panel's size
+				int targetWidth = (int) (this.getWidth() * 0.8);
+				int targetHeight = (int) (this.getHeight() * 0.8);
+
+				// Determine the x and y coordinates to center the image
+				int x = (this.getWidth() - targetWidth) / 2;
+				int y = (this.getHeight() - targetHeight) / 2;
+
+				// Draw the background image centered and scaled to 80% of the panel's size
+				g.drawImage(backgroundImage, x, y, targetWidth, targetHeight, this);
 			}
 		};
 		panelLeftTop.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
@@ -483,12 +500,23 @@ public class TestGUI {
 		buttonLeftTop = new JButton("Refresh JTree");
 		buttonLeftTop.addActionListener(myListner);
 		panelLeftTop.add(buttonLeftTop); // Add the button to the top-left corner
-
 		// Set the panel's background color to white
 		panelLeftTop.setBackground(Color.WHITE);
 
-		// Set the button's background color to white
-		buttonLeftTop.setBackground(Color.WHITE);
+
+		// Set the background color to #3AAAF3
+		buttonLeftTop.setBackground(new Color(58, 170, 243));
+		// set font color to #574382
+		buttonLeftTop.setForeground(new Color(87, 67, 130));
+		// font style to bold
+		buttonLeftTop.setFont(new Font("Arial", Font.ITALIC, 14));
+
+
+		buttonLeftTop.setOpaque(true); // Set the button to be opaque
+
+
+
+
 
 		panelLeftMiddle = new JPanel();
 		panelLeftMiddle.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
@@ -511,12 +539,11 @@ public class TestGUI {
 
 
 
+
 	private void createRightPanel() {
 		panelRightTop = new JPanel();
 		panelRightTop.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelRightTop.setLayout(new BoxLayout(panelRightTop, BoxLayout.PAGE_AXIS));
-		//center the text in the label
-
 
 
 		panelRightMiddle = new JPanel();
@@ -570,7 +597,7 @@ public class TestGUI {
 
 	}
 
-public void setProtocolParametersfromGUI() {
+	public void setProtocolParametersfromGUI() {
 
 		ParameterInfo[] params = selectedCmptInfo.getParameters();
 
@@ -579,36 +606,36 @@ public void setProtocolParametersfromGUI() {
 
 		try {
 
-		for (int i=0; i<params.length; ++i) {
-			ParameterInfo para = params[i];
+			for (int i=0; i<params.length; ++i) {
+				ParameterInfo para = params[i];
 
-			if (InSkipSet(para.getName()) == false) {    // ignore a few irrelevant PLP parameters.
-				jth = 2*ith + 1;
+				if (InSkipSet(para.getName()) == false) {    // ignore a few irrelevant PLP parameters.
+					jth = 2*ith + 1;
 
-				//String pType = para.getType();
+					//String pType = para.getType();
 
-				if ( panelRightMiddle.getComponent(jth) instanceof javax.swing.JTextField) {
-					if ( para.getType().equals("URLType") ) {
-						File localFile = new File(((JTextField) panelRightMiddle.getComponent(jth) ).getText());
-						selectedJob.setInputFileOnClient(para.getName(), localFile);
-						System.out.println(para.getName() + " = "  + ((JTextField) panelRightMiddle.getComponent(jth) ).getText());
+					if ( panelRightMiddle.getComponent(jth) instanceof javax.swing.JTextField) {
+						if ( para.getType().equals("URLType") ) {
+							File localFile = new File(((JTextField) panelRightMiddle.getComponent(jth) ).getText());
+							selectedJob.setInputFileOnClient(para.getName(), localFile);
+							System.out.println(para.getName() + " = "  + ((JTextField) panelRightMiddle.getComponent(jth) ).getText());
+						}
+						else {
+							selectedJob.setInputValue(para.getName(), ((JTextField) panelRightMiddle.getComponent(jth) ).getText());
+							System.out.println(para.getName() + " = "  + ((JTextField) panelRightMiddle.getComponent(jth) ).getText());
+						}
+					}
+					else if ( panelRightMiddle.getComponent(jth) instanceof javax.swing.JComboBox) {
+						selectedJob.setInputValue(para.getName(), ((JComboBox) panelRightMiddle.getComponent(jth) ).getSelectedItem().toString());
+						System.out.println(para.getName() + " = "  + ((JComboBox) panelRightMiddle.getComponent(jth) ).getSelectedItem().toString());
 					}
 					else {
-						selectedJob.setInputValue(para.getName(), ((JTextField) panelRightMiddle.getComponent(jth) ).getText());
-						System.out.println(para.getName() + " = "  + ((JTextField) panelRightMiddle.getComponent(jth) ).getText());
+						; // do nothing
 					}
-				}
-				else if ( panelRightMiddle.getComponent(jth) instanceof javax.swing.JComboBox) {
-					selectedJob.setInputValue(para.getName(), ((JComboBox) panelRightMiddle.getComponent(jth) ).getSelectedItem().toString());
-					System.out.println(para.getName() + " = "  + ((JComboBox) panelRightMiddle.getComponent(jth) ).getSelectedItem().toString());
-				}
-				else {
-					; // do nothing
-				}
 
-				ith++;  // next valid parameter
-			}
-		} // for loop
+					ith++;  // next valid parameter
+				}
+			} // for loop
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -622,21 +649,21 @@ public void setProtocolParametersfromGUI() {
 		System.out.println("I am inside submitJob(). ");
 
 
-			// prepare job parameters
-			// selectedJob.setInputFileOnClient("Source", localFile);              // file on the client-side
-			// selectedJob.setInputValue("Source", "data/Tables/imports-85.txt");  // file on the server-side
-			//
-			// selectedJob.setInputValue("X Property", "Highwaympg");              // set parameter value pair, string
-			// selectedJob.setInputValue("NumOfRun:, 10);                          // ineger type
-			// selectedJob.setInputValue("selectedChoices", String[] values);
-			//
+		// prepare job parameters
+		// selectedJob.setInputFileOnClient("Source", localFile);              // file on the client-side
+		// selectedJob.setInputValue("Source", "data/Tables/imports-85.txt");  // file on the server-side
+		//
+		// selectedJob.setInputValue("X Property", "Highwaympg");              // set parameter value pair, string
+		// selectedJob.setInputValue("NumOfRun:, 10);                          // ineger type
+		// selectedJob.setInputValue("selectedChoices", String[] values);
+		//
 
-			System.out.println("Submitting a job " + selectedProtocolName);
+		System.out.println("Submitting a job " + selectedProtocolName);
 
-			//selectedJob.setInputValue("Project", "BH-00");
-			setProtocolParametersfromGUI();
+		//selectedJob.setInputValue("Project", "BH-00");
+		setProtocolParametersfromGUI();
 
-			try {
+		try {
 
 			selectedJob.validate();
 
@@ -685,18 +712,18 @@ public void setProtocolParametersfromGUI() {
 				}
 			}
 
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				// Remove the job from the server
-				try {
-					System.out.println("Deleting job " + selectedJob.getJobId());
-					selectedJob.releaseJob();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				} // end job cleanup
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// Remove the job from the server
+			try {
+				System.out.println("Deleting job " + selectedJob.getJobId());
+				selectedJob.releaseJob();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			} // end job cleanup
 
-			} // end try
+		} // end try
 
 
 	}
@@ -756,7 +783,7 @@ public void setProtocolParametersfromGUI() {
 
 			if ( e.getSource().equals(buttonLeftTop) ) {     // which object triggers the event?
 				System.out.println("buttonLeftTop was clicked");
-				buttonLeftTop.setText("click to refresh the PLP server info.");
+				buttonLeftTop.setText("refresh Server info.");
 				refreshPLPTree();
 				return;
 			}
