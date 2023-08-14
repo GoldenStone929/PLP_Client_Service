@@ -29,12 +29,17 @@ public class Login extends JFrame {
 
         super("Blossomhill therapeutics Login");
 
+        this.setLocationRelativeTo(null); // center the window
+
+
+
+
         BHTIcon = new ImageIcon(".\\data\\logo-bht.png");
         image = BHTIcon.getImage();
         this.setIconImage(image);
 //        frame.setIconImage(image);
 
-        this.setSize(new Dimension(450, 220));
+//        this.setSize(new Dimension(450, 220));
         this.setMinimumSize(new Dimension(420, 220));
 
         // Setting background image using JLabel
@@ -51,6 +56,9 @@ public class Login extends JFrame {
 
 
         usernameField = new JTextField(20);
+        //set username default to "?"
+        usernameField.setText("ShawnCui");
+
         passwordField = new JPasswordField(20);
         infoTextArea = new JTextArea(5, 20);
         loginButton = new JButton("Login");
