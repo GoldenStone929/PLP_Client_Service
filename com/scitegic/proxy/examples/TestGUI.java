@@ -2,6 +2,7 @@ package com.scitegic.proxy.examples;
 import javax.swing.text.DefaultCaret;
 import java.awt.Insets;
 import javax.swing.border.EmptyBorder;
+import java.awt.Graphics;
 import javax.swing.border.Border;
 import java.awt.Font;
 import javax.swing.JFrame;
@@ -462,26 +463,40 @@ public class TestGUI {
 
 
 	private void createLeftPanel() {
+		// Load the background image
+		ImageIcon imageIcon = new ImageIcon("data/BHT_img.jpg");
+		Image backgroundImage = imageIcon.getImage();
 
-		panelLeftTop = new JPanel();
+		// Create a custom JPanel for the top left panel with the background image
+		panelLeftTop = new JPanel() {
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				// Draw the background image
+				g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);
+			}
+		};
 		panelLeftTop.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
-		panelLeftTop.setLayout(new BoxLayout(panelLeftTop, BoxLayout.PAGE_AXIS));
+		panelLeftTop.setLayout(new FlowLayout(FlowLayout.LEFT)); // Align to the left
+
+		// Set JButton as before
+		buttonLeftTop = new JButton("Refresh JTree");
+		buttonLeftTop.addActionListener(myListner);
+		panelLeftTop.add(buttonLeftTop); // Add the button to the top-left corner
+
+		// Set the panel's background color to white
+		panelLeftTop.setBackground(Color.WHITE);
+
+		// Set the button's background color to white
+		buttonLeftTop.setBackground(Color.WHITE);
 
 		panelLeftMiddle = new JPanel();
 		panelLeftMiddle.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
-		//panelLeftMiddle.setLayout(new BoxLayout(panelLeftMiddle, BoxLayout.PAGE_AXIS));
-//		panelLeftMiddle.setLayout(new BorderLayout(0, 1));
 		panelLeftMiddle.setLayout(new BorderLayout());
-
-
 
 		panelLeftBottom = new JPanel();
 		panelLeftBottom.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelLeftBottom.setLayout(new BoxLayout(panelLeftBottom, BoxLayout.PAGE_AXIS));
-
-		buttonLeftTop = new JButton("Refresh JTree");
-		buttonLeftTop.addActionListener(myListner);
-		panelLeftTop.add(buttonLeftTop, BorderLayout.PAGE_START);
 
 		buttonLeftBottom = new JButton("Show protocol error message (to be implemented)");
 		buttonLeftBottom.addActionListener(myListner);
@@ -492,8 +507,9 @@ public class TestGUI {
 		panelLeft.add(panelLeftBottom, BorderLayout.PAGE_END);
 
 		addPLPTree();
-
 	}
+
+
 
 	private void createRightPanel() {
 		panelRightTop = new JPanel();
