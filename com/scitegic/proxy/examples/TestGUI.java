@@ -1,7 +1,7 @@
 package com.scitegic.proxy.examples;
 import javax.swing.text.DefaultCaret;
 import java.awt.Insets;
-import javax.swing.border.EmptyBorder;
+import java.text.SimpleDateFormat;
 import javax.swing.Box;
 import java.awt.Graphics;
 import javax.swing.border.Border;
@@ -62,7 +62,7 @@ public class TestGUI {
 	private XmldbItem rootFolder = null;
 
 	private JTextArea ResultLabel;  // Declare ResultLabel as an instance variable
-
+	private JTextArea ProgressLabel;  // Declare ProgressLabel as an instance variable
 
 	// selected protocol info
 	private String selectedProtocolName    = null;
@@ -132,14 +132,18 @@ public class TestGUI {
 			rootFolder = compdb.getXmldbContentsRecursive(WEB_PORT_EXAMPLE_PROTOCOLS);
 
 			System.out.println(rootFolder.getName());
+			messageContent(rootFolder.getName());
 
 			rootTreeNode = new DefaultMutableTreeNode(rootFolder.getName());  // the top treeNode. It will not show up in the JTree
 			myTree = new JTree(rootTreeNode);  // create a JTree GUI to interact with user
 			myTree.setBackground(Color.WHITE);  // Set background color of the JTree to white
 
+			myTree.setBorder(null); // remove the border of the JTree
+
 
 			JScrollPane treeScrollPane = new JScrollPane(myTree);
 			treeScrollPane.getViewport().setBackground(Color.WHITE);
+			treeScrollPane.setBorder(null); // remove the border of the JScrollPane
 
 			// Set scroll bars' background color to white
 			treeScrollPane.getHorizontalScrollBar().setBackground(Color.WHITE);
@@ -243,6 +247,7 @@ public class TestGUI {
 			if (protocol != null) {
 				try {
 					//System.out.println("Deleting job " + protocol.getJobId());
+					messageContent("Deleting job " + protocol.getJobId());
 					protocol.releaseJob();
 				} catch (Exception ex) {
 				}
@@ -495,28 +500,18 @@ public class TestGUI {
 		};
 		panelLeftTop.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelLeftTop.setLayout(new FlowLayout(FlowLayout.LEFT)); // Align to the left
-
 		// Set JButton as before
 		buttonLeftTop = new JButton("Refresh JTree");
 		buttonLeftTop.addActionListener(myListner);
 		panelLeftTop.add(buttonLeftTop); // Add the button to the top-left corner
 		// Set the panel's background color to white
 		panelLeftTop.setBackground(Color.WHITE);
-
-
 		// Set the background color to #3AAAF3
 		buttonLeftTop.setBackground(new Color(58, 170, 243));
 		// set font color to #574382
-		buttonLeftTop.setForeground(new Color(87, 67, 130));
-		// font style to bold
+		buttonLeftTop.setForeground(Color.BLACK);
 		buttonLeftTop.setFont(new Font("Arial", Font.ITALIC, 14));
-
-
 		buttonLeftTop.setOpaque(true); // Set the button to be opaque
-
-
-
-
 
 		panelLeftMiddle = new JPanel();
 		panelLeftMiddle.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
@@ -526,16 +521,45 @@ public class TestGUI {
 		panelLeftBottom.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelLeftBottom.setLayout(new BoxLayout(panelLeftBottom, BoxLayout.PAGE_AXIS));
 
-		buttonLeftBottom = new JButton("Show protocol error message (to be implemented)");
-		buttonLeftBottom.addActionListener(myListner);
-		panelLeftBottom.add(buttonLeftBottom, BorderLayout.PAGE_END);
+		// For Progress
+		JLabel ProgressL = new JLabel("Progress:");
+		ProgressL.setFont(new Font("Arial", Font.PLAIN, 18));
+		panelLeftBottom.add(ProgressL);
+		ProgressLabel = new JTextArea(10, 1); // Initialize ProgressLabel with dimensions
+		ProgressLabel.setLineWrap(true);
+		ProgressLabel.setWrapStyleWord(true);
+		ProgressLabel.setEditable(false);
+		ProgressLabel.setBorder(null);
+		ProgressLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+		ProgressLabel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 300)); // Set preferred size
+		ProgressLabel.setBackground(new Color(238, 238, 238));
+		panelLeftBottom.add(ProgressLabel);
 
+
+
+
+
+		// Add panels
 		panelLeft.add(panelLeftTop, BorderLayout.PAGE_START);
 		panelLeft.add(new JScrollPane(panelLeftMiddle), BorderLayout.CENTER);
 		panelLeft.add(panelLeftBottom, BorderLayout.PAGE_END);
 
 		addPLPTree();
 	}
+
+//	public void appendProgressMessage(String message) {
+//		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		String dateTime = formatter.format(new Date());
+//		ProgressLabel.append("[" + dateTime + "] " + message + "\n");
+//	}
+
+	public void messageContent(String content) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String dateTime = formatter.format(new Date());
+		String message = "returned Message is: \n" + content + "\n";
+		ProgressLabel.append("[" + dateTime + "] " + message);
+	}
+
 
 
 
@@ -545,57 +569,58 @@ public class TestGUI {
 		panelRightTop.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelRightTop.setLayout(new BoxLayout(panelRightTop, BoxLayout.PAGE_AXIS));
 
-
 		panelRightMiddle = new JPanel();
 		panelRightMiddle.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
-		panelRightMiddle.setLayout(new BoxLayout(panelRightMiddle, BoxLayout.PAGE_AXIS) );
+		panelRightMiddle.setLayout(new BoxLayout(panelRightMiddle, BoxLayout.PAGE_AXIS));
 
 		panelRightBottom = new JPanel();
 		panelRightBottom.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelRightBottom.setLayout(new BoxLayout(panelRightBottom, BoxLayout.PAGE_AXIS));
+//		panelRightBottom.setBackground(Color.WHITE);
 
 		panelRight.add(panelRightTop, BorderLayout.PAGE_START);
 		panelRight.add(panelRightMiddle, BorderLayout.CENTER);
 		panelRight.add(panelRightBottom, BorderLayout.PAGE_END);
 
-
 		buttonRightTop = new JButton("Button rightTop (PAGE_START)");
 		buttonRightTop.addActionListener(myListner);
 		panelRightTop.add(buttonRightTop, BorderLayout.PAGE_START);
 
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)); // 设置边距为0
 		buttonRightBottom = new JButton("Submit Job");
 		buttonRightBottom.addActionListener(myListner);
-		panelRightBottom.add(buttonRightBottom, BorderLayout.PAGE_END);
+		buttonPanel.add(buttonRightBottom); // 将按钮添加到新面板中
+		panelRightBottom.add(buttonPanel); // 将新面板添加到 panelRightBottom
+
+		//add space inbetween
+		panelRightBottom.add(Box.createRigidArea(new Dimension(0, 10))); // 10像素的垂直空间
+		panelRightBottom.add(Box.createVerticalGlue()); // 垂直方向上的可伸缩空间
+
 
 		// For Result
 		JLabel ResultL = new JLabel("Result:");
+		Font labelFont = ResultL.getFont();
+		ResultL.setFont(new Font(labelFont.getName(), labelFont.getStyle(), 18)); // 设置字体大小为20
 		panelRightBottom.add(ResultL);
-		ResultLabel = new JTextArea(0, 1);  // Initialize ResultLabel
+
+		panelRightBottom.add(ResultL);
+		ResultLabel = new JTextArea(10, 1);  // Initialize ResultLabel
 		ResultLabel.setLineWrap(true);
 		ResultLabel.setWrapStyleWord(true);
 		ResultLabel.setEditable(false);
-		ResultLabel.setEditable(false);
-		ResultLabel.setBorder(BorderFactory.createLineBorder(Color.cyan));
+		ResultLabel.setBorder(null);
+		ResultLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE)); // 设置最大高度和宽度
 		ResultLabel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 300));
+		ResultLabel.setBackground(new Color(238, 238, 238));
 
-		//center the textarea
+		// center the textarea
 		DefaultCaret caret = (DefaultCaret)ResultLabel.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		// make sure it is in the middle based on Jframe resize
 
-
-
-
-
 		panelRightBottom.add(ResultLabel);
-
-
-
-
-
-
-
 	}
+
 
 	public void setProtocolParametersfromGUI() {
 
@@ -619,15 +644,18 @@ public class TestGUI {
 							File localFile = new File(((JTextField) panelRightMiddle.getComponent(jth) ).getText());
 							selectedJob.setInputFileOnClient(para.getName(), localFile);
 							System.out.println(para.getName() + " = "  + ((JTextField) panelRightMiddle.getComponent(jth) ).getText());
+							messageContent(para.getName() + " = "  + ((JTextField) panelRightMiddle.getComponent(jth) ).getText());
 						}
 						else {
 							selectedJob.setInputValue(para.getName(), ((JTextField) panelRightMiddle.getComponent(jth) ).getText());
 							System.out.println(para.getName() + " = "  + ((JTextField) panelRightMiddle.getComponent(jth) ).getText());
+							messageContent(para.getName() + " = "  + ((JTextField) panelRightMiddle.getComponent(jth) ).getText());
 						}
 					}
 					else if ( panelRightMiddle.getComponent(jth) instanceof javax.swing.JComboBox) {
 						selectedJob.setInputValue(para.getName(), ((JComboBox) panelRightMiddle.getComponent(jth) ).getSelectedItem().toString());
 						System.out.println(para.getName() + " = "  + ((JComboBox) panelRightMiddle.getComponent(jth) ).getSelectedItem().toString());
+						messageContent(para.getName() + " = "  + ((JComboBox) panelRightMiddle.getComponent(jth) ).getSelectedItem().toString());
 					}
 					else {
 						; // do nothing
@@ -646,7 +674,8 @@ public class TestGUI {
 
 
 	private void submitJob() {
-		System.out.println("I am inside submitJob(). ");
+//		System.out.println("I am inside submitJob(). ");
+		messageContent("I am inside submitJob(). ");
 
 
 		// prepare job parameters
@@ -659,6 +688,7 @@ public class TestGUI {
 		//
 
 		System.out.println("Submitting a job " + selectedProtocolName);
+		messageContent("Submitting a job " + selectedProtocolName);
 
 		//selectedJob.setInputValue("Project", "BH-00");
 		setProtocolParametersfromGUI();
@@ -674,7 +704,7 @@ public class TestGUI {
 				// get returned global variables as webport result.
 				String message = prr.getWebExportResult("Message");
 //				System.out.println("returned Message is " + message);
-				ResultLabel.append("returned Message is " + message + "\n");
+				ResultLabel.append("returned Message is: " + "\n" + message + "\n");
 
 				// get results as files.
 				String[] results = prr.getResultFiles();
@@ -682,8 +712,10 @@ public class TestGUI {
 				if ((results != null) && (results.length > 0)) {
 					// print all result files
 					System.out.println("Getting job results:");
+					messageContent("Getting job results:");
 					for (int i = 0; i < results.length; i++) {
 						System.out.println(results[i]);                          // remote file URL
+						messageContent(results[i]);
 
 						String localFileName = localOutputFolder + extractFileName(results[i]);
 
@@ -691,24 +723,36 @@ public class TestGUI {
 						pp.getRemoteFileManager().downloadFile(results[0], localResultFile);
 
 						System.out.print("Writing result file to ");
+						messageContent("Writing result file to ");
 						System.out.println(localFileName);
+						messageContent(localFileName);
 
 						//System.out.println(localResultFile.getAbsolutePath());  // local file full path
+						messageContent(localResultFile.getAbsolutePath());
 					}
 					System.out.println();
+					messageContent("");
 				} else {
 //					System.out.println("No job results");
-					//print out in Jframe
-					ResultLabel.append("No job results" + "\n");
+
+//					ResultLabel.append("No job results" + "\n");
+
+					messageContent("No job results");
+
+
 				}
 
+
 			} else {
-				System.out.println("Getting job errors results");
+//				System.out.println("Getting job errors results");
+				messageContent("Getting job errors results");
 
 				String[] error = protocol.getErrorMessages();
 
 				for (int i = 0; i < error.length; i++) {
 					System.out.println(error[i]);
+					messageContent(error[i]);
+
 				}
 			}
 
@@ -718,6 +762,10 @@ public class TestGUI {
 			// Remove the job from the server
 			try {
 				System.out.println("Deleting job " + selectedJob.getJobId());
+
+				messageContent("Deleting job " + selectedJob.getJobId());
+
+
 				selectedJob.releaseJob();
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -737,6 +785,8 @@ public class TestGUI {
 	public TestGUI() {
 		createTopGUI();
 		//System.out.println("This is the testGUI.");
+		messageContent("This is the testGUI.");
+
 	}
 
 	public static void main(String[] args) {
@@ -783,6 +833,8 @@ public class TestGUI {
 
 			if ( e.getSource().equals(buttonLeftTop) ) {     // which object triggers the event?
 				System.out.println("buttonLeftTop was clicked");
+				messageContent("buttonLeftTop was clicked");
+
 				buttonLeftTop.setText("refresh Server info.");
 				refreshPLPTree();
 				return;
@@ -795,10 +847,12 @@ public class TestGUI {
 
 			if ( e.getSource() instanceof JTextField ) {
 				System.out.println("A file JTextField was clicked");
+				messageContent("A file JTextField was clicked");
 
 				JFileChooser fileChooser = new JFileChooser();
 				int response = fileChooser.showOpenDialog(null) ;
 				if (response == JFileChooser.APPROVE_OPTION) {
+					messageContent("File chosen = " + fileChooser.getSelectedFile().getAbsolutePath());
 					System.out.println("File chosen = " + fileChooser.getSelectedFile().getAbsolutePath());
 					((JTextField) e.getSource()).setText(fileChooser.getSelectedFile().getAbsolutePath());
 				}
