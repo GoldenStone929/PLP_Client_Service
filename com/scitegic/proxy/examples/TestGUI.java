@@ -557,8 +557,10 @@ public class TestGUI {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateTime = formatter.format(new Date());
 		String message = "returned Message is: \n" + content + "\n";
-		ProgressLabel.append("[" + dateTime + "] " + message);
+		String existingText = ProgressLabel.getText();
+		ProgressLabel.setText("[" + dateTime + "] " + message + existingText); // Prepend new message to existing text
 	}
+
 
 
 
