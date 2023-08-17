@@ -504,25 +504,28 @@ public class TestGUI {
 		panelLeftMiddle.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelLeftMiddle.setLayout(new BorderLayout());
 
+
+		// left bottom panel -----------------------------------------------------------
+
 		panelLeftBottom = new JPanel();
 		panelLeftBottom.setBorder(BorderFactory.createEmptyBorder(shift, shift, this.height, this.width));
 		panelLeftBottom.setLayout(new BoxLayout(panelLeftBottom, BoxLayout.PAGE_AXIS));
 
-		// For Progress
+		JPanel progressPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel ProgressL = new JLabel("Progress:");
 		ProgressL.setFont(new Font("Arial", Font.PLAIN, 18));
-//		ProgressL.setHorizontalAlignment(SwingConstants.LEFT);
-		panelLeftBottom.add(ProgressL);
-		ProgressLabel = new JTextArea(10, 1); // Initialize ProgressLabel with dimensions
+		progressPanel.add(ProgressL);
+		panelLeftBottom.add(progressPanel);
+
+		ProgressLabel = new JTextArea(10, 1); // 使用尺寸初始化 ProgressLabel
 		ProgressLabel.setLineWrap(true);
 		ProgressLabel.setWrapStyleWord(true);
 		ProgressLabel.setEditable(false);
 		ProgressLabel.setBorder(null);
 		ProgressLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-		ProgressLabel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 300)); // Set preferred size
+		ProgressLabel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 300)); // 设置首选大小
 		ProgressLabel.setBackground(new Color(238, 238, 238));
 		panelLeftBottom.add(ProgressLabel);
-
 
 
 

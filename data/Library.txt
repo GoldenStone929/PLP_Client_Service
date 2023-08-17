@@ -1,0 +1,30 @@
+External Libraries:
+
+    FastInfoset-1.2.12.jar
+    jaxrpc-api-1.1.jar
+    activation-1.jar
+    jaxrpc-impl-1.1.jar
+    jaxp-api-1.2.3.jar
+    jax-qname-1.1.jar
+    jalpp.jar
+    jaxrpc-spi-1.1.jar
+    jaxrpc_pp_stubs.jar
+    jaxrpc_pp_stubs_ext.jar
+    mail-1.2.jar
+    relaxngDatatype-1.0.jar
+    saaj-api-1.2.jar
+    saaj-impl-1.2.jar
+    slf4j-api-1.7.25.jar
+    xerces-1.0.jar
+    xsdlib-1.0.jar
+    activation-1
+    relaxngDatatype-1.0
+
+Java Version (library) : JDK 20
+
+
+
+
+Java Compiler: javac 20
+
+
