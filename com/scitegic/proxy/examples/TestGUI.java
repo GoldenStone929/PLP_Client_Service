@@ -1,27 +1,14 @@
 package com.scitegic.proxy.examples;
+import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.Insets;
 import java.text.SimpleDateFormat;
-import javax.swing.Box;
 import java.awt.Graphics;
 import javax.swing.border.Border;
 import java.awt.Font;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Color;
@@ -524,6 +511,7 @@ public class TestGUI {
 		// For Progress
 		JLabel ProgressL = new JLabel("Progress:");
 		ProgressL.setFont(new Font("Arial", Font.PLAIN, 18));
+//		ProgressL.setHorizontalAlignment(SwingConstants.LEFT);
 		panelLeftBottom.add(ProgressL);
 		ProgressLabel = new JTextArea(10, 1); // Initialize ProgressLabel with dimensions
 		ProgressLabel.setLineWrap(true);
@@ -556,7 +544,8 @@ public class TestGUI {
 	public void messageContent(String content) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String dateTime = formatter.format(new Date());
-		String message = "returned Message is: \n" + content + "\n";
+//		String message = "returned Message is: \n" + content + "\n";
+		String message =  content + "\n";
 		String existingText = ProgressLabel.getText();
 		ProgressLabel.setText("[" + dateTime + "] " + message + existingText); // Prepend new message to existing text
 	}
@@ -584,7 +573,7 @@ public class TestGUI {
 		panelRight.add(panelRightMiddle, BorderLayout.CENTER);
 		panelRight.add(panelRightBottom, BorderLayout.PAGE_END);
 
-		buttonRightTop = new JButton("Button rightTop (PAGE_START)");
+		buttonRightTop = new JButton("Select a file to start");
 		buttonRightTop.addActionListener(myListner);
 		panelRightTop.add(buttonRightTop, BorderLayout.PAGE_START);
 
@@ -705,8 +694,10 @@ public class TestGUI {
 			if (JobStatus.Finished.equals(status)) {
 				// get returned global variables as webport result.
 				String message = prr.getWebExportResult("Message");
-//				System.out.println("returned Message is " + message);
-				ResultLabel.append("returned Message is: " + "\n" + message + "\n");
+//				System.out.println("returned Message is " + message) ; content + "\n";
+//				ResultLabel.append("returned Message is: " + "\n" + message + "\n");
+				ResultLabel.append( message + "\n");
+
 
 				// get results as files.
 				String[] results = prr.getResultFiles();
@@ -834,10 +825,10 @@ public class TestGUI {
 			}
 
 			if ( e.getSource().equals(buttonLeftTop) ) {     // which object triggers the event?
-				System.out.println("buttonLeftTop was clicked");
-				messageContent("buttonLeftTop was clicked");
+//				System.out.println("buttonLeftTop was clicked");
+				messageContent("Server refreshed.");
 
-				buttonLeftTop.setText("refresh Server info.");
+				buttonLeftTop.setText("Refresh Server info.");
 				refreshPLPTree();
 				return;
 			}
@@ -848,7 +839,7 @@ public class TestGUI {
 			}
 
 			if ( e.getSource() instanceof JTextField ) {
-				System.out.println("A file JTextField was clicked");
+//				System.out.println("A file JTextField was clicked");
 				messageContent("A file JTextField was clicked");
 
 				JFileChooser fileChooser = new JFileChooser();
