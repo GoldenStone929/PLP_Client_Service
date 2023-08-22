@@ -11,7 +11,7 @@ The JDK 8 version is also available and includes all the essential source code. 
 The document provides instructions for using the Java Client SDK, a set of pre-built Java classes that simplify the creation of a custom SOAP client for the Pipeline Pilot server. By abstracting much of the complexity involved in creating SOAP clients, the SDK offers an object-oriented interface that may feel familiar.
 
 ## Building the Example
-
+ 
 The root folder contains aids for Windows development, including:
 - `compile.bat`: A batch file with a command line to build the source code.
 - `run.bat`: A file to execute a specific class.
