@@ -33,7 +33,7 @@ Another tip advises copying the jar files and editing the paths in the batch fil
 
 ## Compatibility and Project Goals
 
-This project is currently compatible with JDK version 11 or higher. I am in the process of downgrading it to JDK 1.8, and the updated version will be available in a separate repository. The goal is to transform it into a simple plugin or a software itself for data handling.
+This project is currently compatible with JDK version 11 or higher. I have successfully downgraded it to JDK 1.8, and the updated version will be available in a separate repository. The goal is to transform it into a simple plugin or a software itself for data handling.
 
 All functionalities are working as expected, and it serves as a free alternative to `biovia webport`. Feel free to download and use it, and please don't hesitate to let me know if you encounter any issues.
 
